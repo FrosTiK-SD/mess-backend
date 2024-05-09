@@ -3,8 +3,8 @@ package constants
 type Course string
 
 const (
-	BTECH Course = "BTech"
+	BTECH Course = "BTECH"
 	IDD   Course = "IDD"
-	MTECH Course = "MTech"
-	PHD   Course = "PhD"
+	MTECH Course = "MTECH"
+	PHD   Course = "PHD"
 )
