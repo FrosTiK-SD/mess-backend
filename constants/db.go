@@ -10,11 +10,12 @@ const REDIS_URI = "REDIS_URI"
 const REDIS_USERNAME = "REDIS_USERNAME"
 const REDIS_PASSWORD = "REDIS_PASSWORD"
 
-const COLLECTION_USERS = "users"
-const COLLECTION_MESSES = "messes"
-const COLLECTION_HOSTELS = "hostels"
-const COLLECTION_ROOMS = "rooms"
 const COLLECTION_GROUPS = "groups"
+const COLLECTION_HOSTELS = "hostels"
+const COLLECTION_MEALS = "meals"
+const COLLECTION_MESSES = "messes"
+const COLLECTION_ROOMS = "rooms"
+const COLLECTION_USERS = "users"
 
 const FIREBASE_PROJECT_ID = "FIREBASE_PROJECT_ID"
 
