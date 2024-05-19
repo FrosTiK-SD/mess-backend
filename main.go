@@ -27,7 +27,7 @@ var json = jsoniter.ConfigCompatibleWithStandardLibrary
 func main() {
 
 	app := fiber.New(fiber.Config{
-		Prefork:           true,
+		Prefork:           false,
 		JSONEncoder:       json.Marshal,
 		EnablePrintRoutes: true,
 		JSONDecoder:       json.Unmarshal,
@@ -73,6 +73,13 @@ func main() {
 	app.Use(healthcheck.New())
 
 	app.Get("/hello", handler.Hello)
+
+	adminAPI := app.Group("/admin")
+
+	adminAPI.Post("/mess", handler.CreateMess)
+	adminAPI.Post("/hostel", handler.CreateHostel)
+	adminAPI.Post("/room", handler.CreateRoom)
+	adminAPI.Post("/user", handler.RegisterUser)
 
 	// Monitor
 	app.Get("/metrics", monitor.New())
