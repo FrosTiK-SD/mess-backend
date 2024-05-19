@@ -1,30 +1,40 @@
 package models
 
 import (
-	"github.com/FrosTiK-SD/mess-backend/constants"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
-	ID              primitive.ObjectID     `json:"_id,omitempty" bson:"_id"`
-	Permissions     []constants.Permission `json:"permissions" bson:"permissions" binding:"required"`
-	Groups          []primitive.ObjectID   `json:"groups" bson:"groups"` //Object ID of groups to which the user belongs
-	AllocatedHostel primitive.ObjectID     `json:"allocatedHostel" bson:"allocatedHostel,omitempty"`
-	AllocatedMess   primitive.ObjectID     `json:"allocatedMess,omitempty" bson:"allocatedMess,omitempty"`
-	AllocatedRoom   primitive.ObjectID     `json:"allocatedRoom,omitempty" bson:"allocatedRoom,omitempty"`
+	ID     primitive.ObjectID   `json:"_id,omitempty" bson:"_id"`
+	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
 
-	//Academic Details
-	StartYear  uint   `json:"startYear,omitempty" bson:"startYear,omitempty"`
-	EndYear    uint   `json:"endYear,omitempty" bson:"endYear,omitempty"`
-	RollNo     string `json:"rollNo,omitempty" bson:"rollNo,omitempty"`
-	Department string `json:"department,omitempty" bson:"department,omitempty"`
-	Course     string `json:"course,omitempty" bson:"course,omitempty"`
+	// Not nil in case of student
+	AllocationDetails *AllocationDetails `json:"allocationDetails,omitempty" bson:"allocationDetails,omitempty"`
+	InstituteProfile  *InstituteProfile  `json:"instituteProfile,omitempty" bson:"instituteProfile,omitempty"`
 
-	//Managing Details
-	ManagingHostels []primitive.ObjectID
-	ManagingMesses  []primitive.ObjectID
+	//Not nil in case of caretaker
+	ManagingDetails *ManagingDetails `json:"managingDetails,omitempty" bson:"managingDetails,omitempty"`
 
 	//Contact Details
 	Email  string `json:"email" bson:"email" binding:"required"`
 	Mobile string `json:"mobile" bson:"mobile"`
+}
+
+type InstituteProfile struct {
+	StartYear  int    `json:"startYear,omitempty" bson:"startYear,omitempty"`
+	EndYear    int    `json:"endYear,omitempty" bson:"endYear,omitempty"`
+	RollNo     int    `json:"rollNo,omitempty" bson:"rollNo,omitempty"`
+	Department string `json:"department,omitempty" bson:"department,omitempty"`
+	Course     string `json:"course,omitempty" bson:"course,omitempty"`
+}
+
+type AllocationDetails struct {
+	AllocatedHostel primitive.ObjectID `json:"allocatedHostel" bson:"allocatedHostel,omitempty"`
+	AllocatedMess   primitive.ObjectID `json:"allocatedMess,omitempty" bson:"allocatedMess,omitempty"`
+	AllocatedRoom   primitive.ObjectID `json:"allocatedRoom,omitempty" bson:"allocatedRoom,omitempty"`
+}
+
+type ManagingDetails struct {
+	ManagingHostels []primitive.ObjectID `json:"managingHostels,omitempty" bson:"managingHostels,omitempty"`
+	ManagingMesses  []primitive.ObjectID `json:"managingMesses,omitempty" bson:"managingMesses,omitempty"`
 }

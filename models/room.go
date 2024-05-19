@@ -3,8 +3,10 @@ package models
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Room struct {
-	ID        primitive.ObjectID `json:"_id" bson:"_id"` //for uniquely identifying a room
+	ID        primitive.ObjectID `json:"_id" bson:"_id"`
+	Hostel    primitive.ObjectID `json:"hostel" bson:"hostel" binding:"required"`
 	Name      string             `json:"name" bson:"name" binding:"required"`
+	Floor     int                `json:"floor" bson:"floor,omitempty"`
 	Available bool               `json:"available" bson:"available" binding:"required"`
 	Remarks   string             `json:"remarks,omitempty" bson:"remarks,omitempty"`
 }

@@ -72,7 +72,7 @@ func main() {
 	// Health check
 	app.Use(healthcheck.New())
 
-	app.Get("/hello", handler.RegisterStudent)
+	app.Get("/hello", handler.Hello)
 
 	// Monitor
 	app.Get("/metrics", monitor.New())

@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (handler *Handler) RegisterStudent(ctx *fiber.Ctx) error {
-	ctx.JSON(interfaces.GetGenericResponse(true, "", nil, nil))
+func (handler *Handler) Hello(ctx *fiber.Ctx) error {
+	ctx.JSON(interfaces.GetGenericResponse(true, "hello", nil, nil))
 	return nil
 }
