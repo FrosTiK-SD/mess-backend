@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
@@ -9,6 +8,9 @@ import (
 	"github.com/FrosTiK-SD/mess-backend/handler"
 	"github.com/FrosTiK-SD/mess-backend/interfaces"
 	"github.com/FrosTiK-SD/mess-backend/utils"
+	"github.com/FrosTiK-SD/mongik"
+	mongikConstants "github.com/FrosTiK-SD/mongik/constants"
+	mongikConfig "github.com/FrosTiK-SD/mongik/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -17,21 +19,12 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/swagger"
-	"github.com/joho/godotenv"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/kr/pretty"
-	_ "github.com/lib/pq"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func main() {
-	godotenv.Load()
-
-	connStr := "postgres://postgres:postgres@localhost/todos?sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-
-	pretty.Print(err)
 
 	app := fiber.New(fiber.Config{
 		Prefork:           true,
@@ -45,8 +38,20 @@ func main() {
 		},
 	})
 
-	handler := handler.Handler{
-		DB: db,
+	mongikClient := mongik.NewClient(os.Getenv(constants.CONNECTION_STRING), &mongikConfig.Config{
+		Client: mongikConstants.BIGCACHE,
+		TTL:    constants.CACHING_DURATION,
+		Debug:  false,
+		RedisConfig: &mongikConfig.RedisConfig{
+			URI:      os.Getenv(constants.REDIS_URI),
+			Password: os.Getenv(constants.REDIS_PASSWORD),
+			Username: os.Getenv(constants.REDIS_USERNAME),
+		},
+		FallbackToDefault: true,
+	})
+
+	handler := &handler.Handler{
+		MongikClient: mongikClient,
 	}
 
 	// Allow origin

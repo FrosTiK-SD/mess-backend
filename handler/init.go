@@ -1,7 +1,7 @@
 package handler
 
-import "database/sql"
+import models "github.com/FrosTiK-SD/mongik/models"
 
 type Handler struct {
-	DB *sql.DB
+	MongikClient *models.Mongik
 }
