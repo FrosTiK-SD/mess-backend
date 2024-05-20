@@ -77,7 +77,17 @@ func main() {
 	adminAPI := app.Group("/admin")
 
 	adminAPI.Post("/mess", handler.CreateMess)
+	adminAPI.Get("/mess", handler.GetMess)
+
 	adminAPI.Post("/hostel", handler.CreateHostel)
+	adminAPI.Get("/hostel", handler.GetHostel)
+
+	adminAPI.Post("/meal", handler.CreateMeal)
+	adminAPI.Get("/meal", handler.GetMeal)
+
+	adminAPI.Post("/menu-item", handler.CreateMenuItem)
+	adminAPI.Get("/menu-item", handler.GetMenuItem)
+
 	adminAPI.Post("/room", handler.CreateRoom)
 	adminAPI.Post("/user", handler.RegisterUser)
 

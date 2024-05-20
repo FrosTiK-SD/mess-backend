@@ -31,13 +31,13 @@ func (handler *Handler) CreateMess(ctx *fiber.Ctx) error {
 
 func (handler *Handler) GetMess(ctx *fiber.Ctx) error {
 	var Mess models.Mess
-	messID, errObjID := primitive.ObjectIDFromHex(ctx.GetReqHeaders()["messID"][0])
+	messID, errObjID := primitive.ObjectIDFromHex(ctx.Get("messID"))
 	if errObjID != nil {
 		return errObjID
 	}
 
 	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MESSES)
-	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": messID}).Decode(Mess); errFind != nil {
+	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": messID}).Decode(&Mess); errFind != nil {
 		return errFind
 	}
 

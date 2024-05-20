@@ -11,26 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (handler *Handler) CreateHostel(ctx *fiber.Ctx) error {
-	var Hostel models.Hostel
-
-	// Parse JSON body
-	if err := ctx.BodyParser(&Hostel); err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	Hostel.ID = primitive.NewObjectIDFromTimestamp(time.Now())
-
-	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_HOSTELS)
-	if result, err := collection.InsertOne(ctx.Context(), Hostel); err != nil {
-		return err
-	} else {
-		ctx.JSON(interfaces.GetGenericResponse(true, "Mess Created", result, nil))
-	}
-
-	return nil
-}
-
 func (handler *Handler) CreateRoom(ctx *fiber.Ctx) error {
 	var Room models.Room
 

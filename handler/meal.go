@@ -31,13 +31,13 @@ func (handler *Handler) CreateMeal(ctx *fiber.Ctx) error {
 
 func (handler *Handler) GetMeal(ctx *fiber.Ctx) error {
 	var Meal models.Meal
-	mealID, errObjID := primitive.ObjectIDFromHex(ctx.GetReqHeaders()["mealID"][0])
+	mealID, errObjID := primitive.ObjectIDFromHex(ctx.Get("mealID"))
 	if errObjID != nil {
 		return errObjID
 	}
 
 	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEALS)
-	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": mealID}).Decode(Meal); errFind != nil {
+	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": mealID}).Decode(&Meal); errFind != nil {
 		return errFind
 	}
 
