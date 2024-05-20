@@ -1,6 +1,8 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Meal struct {
 	ID       primitive.ObjectID `json:"_id" bson:"_id"`
@@ -19,17 +21,17 @@ type MealType struct {
 	ID   primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
 	Mess primitive.ObjectID `json:"mess,omitempty" bson:"mess"`
 
-	Name      string  `json:"name,omitempty" bson:"name"`
-	StartTime string  `json:"startTime,omitempty" bson:"endTime"`
-	EndTime   string  `json:"endTime,omitempty" bson:"endTime"`
-	Cost      float64 `json:"cost,omitempty" bson:"cost"`
+	Name      string `json:"name,omitempty" bson:"name"`
+	StartTime string `json:"startTime,omitempty" bson:"endTime"` // time.Kitchen format
+	EndTime   string `json:"endTime,omitempty" bson:"endTime"`   // time.Kitchen format
+	Cost      int    `json:"cost,omitempty" bson:"cost"`         // in paisa
 }
 
-type MenuItems struct {
-	ID   primitive.ObjectID `json:"_id" bson:"_id"`
-	Mess primitive.ObjectID `json:"mess" bson:"mess"`
+type MenuItem struct {
+	ID   primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
+	Mess primitive.ObjectID `json:"mess,omitempty" bson:"mess"`
 
-	Name   string
-	ImgUrl string
-	Cost   float64
+	Name   string  `json:"name,omitempty" bson:"name,omitempty"`
+	ImgUrl *string `json:"imgUrl,omitempty" bson:"imgUrl,omitempty"`
+	Cost   int     `json:"cost,omitempty" bson:"cost,omitempty"` // in paisa
 }

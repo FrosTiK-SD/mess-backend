@@ -12,6 +12,7 @@ const REDIS_PASSWORD = "REDIS_PASSWORD"
 
 const COLLECTION_GROUPS = "groups"
 const COLLECTION_HOSTELS = "hostels"
+const COLLECTION_MENUITEMS = "menuItems"
 const COLLECTION_MEALS = "meals"
 const COLLECTION_MESSES = "messes"
 const COLLECTION_ROOMS = "rooms"
