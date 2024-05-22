@@ -5,15 +5,15 @@ import (
 )
 
 type User struct {
-	ID     primitive.ObjectID   `json:"_id,omitempty" bson:"_id"`
+	ID     primitive.ObjectID   `json:"_id" bson:"_id"`
 	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
 
 	// Not nil objectID in case of student
-	AllocationDetails AllocationDetails `json:"allocationDetails,omitempty" bson:"allocationDetails,omitempty"`
-	InstituteProfile  InstituteProfile  `json:"instituteProfile,omitempty" bson:"instituteProfile,omitempty"`
+	AllocationDetails AllocationDetails `json:"allocationDetails" bson:"allocationDetails"`
+	InstituteProfile  InstituteProfile  `json:"instituteProfile" bson:"instituteProfile"`
 
 	//Not empty array in case of caretaker
-	ManagingDetails ManagingDetails `json:"managingDetails,omitempty" bson:"managingDetails,omitempty"`
+	ManagingDetails ManagingDetails `json:"managingDetails" bson:"managingDetails"`
 
 	//Contact Details
 	Email  string `json:"email" bson:"email" binding:"required"`
@@ -29,12 +29,12 @@ type InstituteProfile struct {
 }
 
 type AllocationDetails struct {
-	AllocatedHostel primitive.ObjectID `json:"allocatedHostel" bson:"allocatedHostel,omitempty"`
-	AllocatedMess   primitive.ObjectID `json:"allocatedMess,omitempty" bson:"allocatedMess,omitempty"`
-	AllocatedRoom   primitive.ObjectID `json:"allocatedRoom,omitempty" bson:"allocatedRoom,omitempty"`
+	Hostel primitive.ObjectID `json:"hostel" bson:"hostel"`
+	Mess   primitive.ObjectID `json:"mess" bson:"mess"`
+	Room   primitive.ObjectID `json:"room" bson:"room"`
 }
 
 type ManagingDetails struct {
-	ManagingHostels []primitive.ObjectID `json:"managingHostels,omitempty" bson:"managingHostels,omitempty"`
-	ManagingMesses  []primitive.ObjectID `json:"managingMesses,omitempty" bson:"managingMesses,omitempty"`
+	Hostels []primitive.ObjectID `json:"hostels" bson:"hostels"`
+	Messes  []primitive.ObjectID `json:"messes" bson:"messes"`
 }

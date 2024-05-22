@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/FrosTiK-SD/mess-backend/constants"
 	"github.com/FrosTiK-SD/mess-backend/interfaces"
@@ -19,7 +18,7 @@ func (handler *Handler) CreateMess(ctx *fiber.Ctx) error {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	Mess.ID = primitive.NewObjectIDFromTimestamp(time.Now())
+	Mess.ID = primitive.NewObjectID()
 
 	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MESSES)
 	if result, err := collection.InsertOne(ctx.Context(), Mess); err != nil {

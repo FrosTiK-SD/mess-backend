@@ -92,6 +92,7 @@ func main() {
 		adminAPI.Post("/room", handler.CreateRoom)
 
 		adminAPI.Post("/user", handler.CreateUser)
+		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
 	}
 
 	caretakerAPI := app.Group("/caretaker")
