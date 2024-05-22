@@ -75,21 +75,29 @@ func main() {
 	app.Get("/hello", handler.Hello)
 
 	adminAPI := app.Group("/admin")
+	{
 
-	adminAPI.Post("/mess", handler.CreateMess)
-	adminAPI.Get("/mess", handler.GetMess)
+		adminAPI.Post("/mess", handler.CreateMess)
+		adminAPI.Get("/mess", handler.GetMess)
 
-	adminAPI.Post("/hostel", handler.CreateHostel)
-	adminAPI.Get("/hostel", handler.GetHostel)
+		adminAPI.Post("/hostel", handler.CreateHostel)
+		adminAPI.Get("/hostel", handler.GetHostel)
 
-	adminAPI.Post("/meal", handler.CreateMeal)
-	adminAPI.Get("/meal", handler.GetMeal)
+		adminAPI.Post("/meal", handler.CreateMeal)
+		adminAPI.Get("/meal", handler.GetMeal)
 
-	adminAPI.Post("/menu-item", handler.CreateMenuItem)
-	adminAPI.Get("/menu-item", handler.GetMenuItem)
+		adminAPI.Post("/menu-item", handler.CreateMenuItem)
+		adminAPI.Get("/menu-item", handler.GetMenuItem)
 
-	adminAPI.Post("/room", handler.CreateRoom)
-	adminAPI.Post("/user", handler.RegisterUser)
+		adminAPI.Post("/room", handler.CreateRoom)
+
+		adminAPI.Post("/user", handler.CreateUser)
+	}
+
+	caretakerAPI := app.Group("/caretaker")
+	{
+		caretakerAPI.Get("/mess/dashboard", handler.GetMessDashboard)
+	}
 
 	// Monitor
 	app.Get("/metrics", monitor.New())

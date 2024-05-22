@@ -8,12 +8,12 @@ type User struct {
 	ID     primitive.ObjectID   `json:"_id,omitempty" bson:"_id"`
 	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
 
-	// Not nil in case of student
-	AllocationDetails *AllocationDetails `json:"allocationDetails,omitempty" bson:"allocationDetails,omitempty"`
-	InstituteProfile  *InstituteProfile  `json:"instituteProfile,omitempty" bson:"instituteProfile,omitempty"`
+	// Not nil objectID in case of student
+	AllocationDetails AllocationDetails `json:"allocationDetails,omitempty" bson:"allocationDetails,omitempty"`
+	InstituteProfile  InstituteProfile  `json:"instituteProfile,omitempty" bson:"instituteProfile,omitempty"`
 
-	//Not nil in case of caretaker
-	ManagingDetails *ManagingDetails `json:"managingDetails,omitempty" bson:"managingDetails,omitempty"`
+	//Not empty array in case of caretaker
+	ManagingDetails ManagingDetails `json:"managingDetails,omitempty" bson:"managingDetails,omitempty"`
 
 	//Contact Details
 	Email  string `json:"email" bson:"email" binding:"required"`

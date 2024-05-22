@@ -43,3 +43,7 @@ func (handler *Handler) GetMess(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Mess with the given Mess ID", Mess, nil))
 }
+
+func (handler *Handler) GetMessDashboard(ctx *fiber.Ctx) error {
+	return nil
+}
