@@ -44,5 +44,74 @@ func (handler *Handler) GetMess(ctx *fiber.Ctx) error {
 }
 
 func (handler *Handler) GetMessDashboard(ctx *fiber.Ctx) error {
-	return nil
+	userID, errObjID := primitive.ObjectIDFromHex(ctx.Get("userID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	type MessDashboard struct {
+		AllocatedToMess []struct {
+			ID primitive.ObjectID `json:"_id" bson:"_id"`
+		} `json:"allocatedToMess" bson:"allocatedToMess"`
+		ManagedMess models.Mess
+	}
+
+	var results []MessDashboard
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
+	pipeline := bson.A{
+		bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: userID}}}},
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "messes"},
+					{Key: "localField", Value: "managingDetails.messes"},
+					{Key: "foreignField", Value: "_id"},
+					{Key: "as", Value: "managedMesses"},
+				},
+			},
+		},
+		bson.D{{Key: "$unwind", Value: "$managedMesses"}},
+		bson.D{{Key: "$project", Value: bson.D{{Key: "managedMess", Value: "$managedMesses"}}}},
+		bson.D{{Key: "$unset", Value: "_id"}},
+		bson.D{
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "users"},
+					{Key: "let", Value: bson.D{{Key: "mess_id", Value: "$managedMess._id"}}},
+					{Key: "as", Value: "allocatedToMess"},
+					{Key: "pipeline",
+						Value: bson.A{
+							bson.D{
+								{Key: "$match",
+									Value: bson.D{
+										{Key: "$expr",
+											Value: bson.D{
+												{Key: "$eq",
+													Value: bson.A{
+														"$allocationDetails.mess",
+														"$$mess_id",
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+							bson.D{{Key: "$project", Value: bson.D{{Key: "_id", Value: 1}}}},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	if cursor, err := collection.Aggregate(ctx.Context(), pipeline); err != nil {
+		return err
+	} else {
+		if errBind := cursor.All(ctx.Context(), &results); errBind != nil {
+			return errBind
+		}
+		return ctx.JSON(interfaces.GetGenericResponse(true, "Fetched Mess Dashboard", results, nil))
+	}
 }
