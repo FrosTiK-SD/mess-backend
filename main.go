@@ -86,8 +86,13 @@ func main() {
 		adminAPI.Post("/meal", handler.CreateMeal)
 		adminAPI.Get("/meal", handler.GetMeal)
 
+		adminAPI.Post("/meal-type", handler.CreateMealType)
+		adminAPI.Get("/meal-type", handler.GetMealType)
+		adminAPI.Get("/meal-type/all", handler.GetAllMealTypesOfAMess)
+
 		adminAPI.Post("/menu-item", handler.CreateMenuItem)
 		adminAPI.Get("/menu-item", handler.GetMenuItem)
+		adminAPI.Get("/menu-item/all", handler.GetAllMenuItemsOfAMess)
 
 		adminAPI.Post("/room", handler.CreateRoom)
 

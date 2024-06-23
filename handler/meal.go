@@ -24,7 +24,7 @@ func (handler *Handler) CreateMeal(ctx *fiber.Ctx) error {
 	if result, err := collection.InsertOne(ctx.Context(), Meal); err != nil {
 		return err
 	} else {
-		return ctx.JSON(interfaces.GetGenericResponse(true, "Mess Created", result, nil))
+		return ctx.JSON(interfaces.GetGenericResponse(true, "Meal Created", result, nil))
 	}
 }
 
@@ -41,4 +41,55 @@ func (handler *Handler) GetMeal(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Meal with the given Meal ID", Meal, nil))
+}
+
+func (handler *Handler) CreateMealType(ctx *fiber.Ctx) error {
+	var MealType models.MealType
+
+	if err := ctx.BodyParser(&MealType); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	MealType.ID = primitive.NewObjectID()
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEALS)
+	if result, err := collection.InsertOne(ctx.Context(), MealType); err != nil {
+		return err
+	} else {
+		return ctx.JSON(interfaces.GetGenericResponse(true, "MealType Created", result, nil))
+	}
+}
+
+func (handler *Handler) GetMealType(ctx *fiber.Ctx) error {
+	var MealType models.MealType
+	mealID, errObjID := primitive.ObjectIDFromHex(ctx.Get("mealID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEAL_TYPES)
+	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": mealID}).Decode(&MealType); errFind != nil {
+		return errFind
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "Found MealType with the given Meal ID", MealType, nil))
+}
+
+func (handler *Handler) GetAllMealTypesOfAMess(ctx *fiber.Ctx) error {
+	var MealTypes []models.MealType
+	messID, errObjID := primitive.ObjectIDFromHex(ctx.Get("messID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEAL_TYPES)
+	if cursor, errFind := collection.Find(ctx.Context(), bson.M{"mess": messID}); errFind != nil {
+		return errFind
+	} else {
+		if errDecode := cursor.All(ctx.Context(), &MealTypes); errDecode != nil {
+			return errDecode
+		}
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "Found all MealTypes of the given mess", MealTypes, nil))
 }
