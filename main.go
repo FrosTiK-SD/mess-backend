@@ -88,21 +88,22 @@ func main() {
 
 		adminAPI.Post("/meal-type", handler.CreateMealType)
 		adminAPI.Get("/meal-type", handler.GetMealType)
-		adminAPI.Get("/meal-type/all", handler.GetAllMealTypesOfAMess)
 
 		adminAPI.Post("/menu-item", handler.CreateMenuItem)
 		adminAPI.Get("/menu-item", handler.GetMenuItem)
-		adminAPI.Get("/menu-item/all", handler.GetAllMenuItemsOfAMess)
 
 		adminAPI.Post("/room", handler.CreateRoom)
 
 		adminAPI.Post("/user", handler.CreateUser)
+		adminAPI.Get("/user/populated", handler.GetUserPopulated)
 		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
 	}
 
 	caretakerAPI := app.Group("/caretaker")
 	{
 		caretakerAPI.Get("/mess/dashboard", handler.GetMessDashboard)
+		caretakerAPI.Get("/menu-item/all", handler.GetAllMenuItemsOfAMess)
+		caretakerAPI.Get("/meal-type/all", handler.GetAllMealTypesOfAMess)
 	}
 
 	// Monitor
