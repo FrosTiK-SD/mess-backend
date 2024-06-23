@@ -104,6 +104,7 @@ func main() {
 		caretakerAPI.Get("/mess/dashboard", handler.GetMessDashboard)
 		caretakerAPI.Get("/menu-item/all", handler.GetAllMenuItemsOfAMess)
 		caretakerAPI.Get("/meal-type/all", handler.GetAllMealTypesOfAMess)
+		caretakerAPI.Post("/meal/update/menu/by/date", handler.UpdateMealsByDate)
 	}
 
 	// Monitor

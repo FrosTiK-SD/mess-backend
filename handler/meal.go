@@ -93,3 +93,43 @@ func (handler *Handler) GetAllMealTypesOfAMess(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found all MealTypes of the given mess", MealTypes, nil))
 }
+
+func (handler *Handler) UpdateMealsByDate(ctx *fiber.Ctx) error {
+	u := new(interfaces.UpdateMeal)
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEALS)
+
+	if err := ctx.BodyParser(u); err != nil {
+		return err
+	}
+
+	filter := bson.M{
+		"mess":     u.MessID,
+		"mealType": u.MealType,
+		"date": bson.M{
+			"$in": u.Dates,
+		},
+	}
+
+	var update bson.M
+	if u.AppendOnly {
+		update = bson.M{
+			"$push": bson.M{
+				"menu": bson.M{
+					"$each": u.Menu,
+				},
+			},
+		}
+	} else {
+		update = bson.M{
+			"$set": bson.M{
+				"menu": u.Menu,
+			},
+		}
+	}
+
+	if result, err := collection.UpdateMany(ctx.Context(), filter, update); err != nil {
+		return err
+	} else {
+		return ctx.JSON(interfaces.GetGenericResponse(true, "Updated Meals", result, nil))
+	}
+}
