@@ -43,6 +43,32 @@ func (handler *Handler) GetMess(ctx *fiber.Ctx) error {
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Mess with the given Mess ID", Mess, nil))
 }
 
+func (handler *Handler) UpdateMess(ctx *fiber.Ctx) error {
+	var updateData models.Mess
+	messID, errObjID := primitive.ObjectIDFromHex(ctx.Get("messID"))
+	if errObjID != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid mess ID"})
+	}
+	if err := ctx.BodyParser(&updateData); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MESSES)
+	update := bson.M{
+		"$set": updateData,
+	}
+	result, err := collection.UpdateOne(ctx.Context(), bson.M{"_id": messID}, update)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update mess"})
+	}
+
+	if result.MatchedCount == 0 {
+		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Mess not found"})
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "Mess updated successfully", nil, nil))
+}
+
 func (handler *Handler) GetMessDashboard(ctx *fiber.Ctx) error {
 	userID, errObjID := primitive.ObjectIDFromHex(ctx.Get("userID"))
 	if errObjID != nil {

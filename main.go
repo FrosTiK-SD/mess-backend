@@ -79,6 +79,7 @@ func main() {
 
 		adminAPI.Post("/mess", handler.CreateMess)
 		adminAPI.Get("/mess", handler.GetMess)
+		adminAPI.Put("/mess", handler.UpdateMess)
 
 		adminAPI.Post("/hostel", handler.CreateHostel)
 		adminAPI.Get("/hostel", handler.GetHostel)
