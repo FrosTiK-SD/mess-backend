@@ -69,6 +69,23 @@ func (handler *Handler) UpdateMess(ctx *fiber.Ctx) error {
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Mess updated successfully", nil, nil))
 }
 
+func (handler *Handler) DeleteMess(ctx *fiber.Ctx) error {
+	messID, errObjID := primitive.ObjectIDFromHex(ctx.Get("messID"))
+	if errObjID != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid mess ID"})
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MESSES)
+	if result, err := collection.DeleteOne(ctx.Context(), bson.M{"_id": messID}); err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete mess"})
+	} else {
+		if result.DeletedCount == 0 {
+			return ctx.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Mess not found"})
+		}
+		return ctx.JSON(interfaces.GetGenericResponse(true, "Mess deleted successfully", nil, nil))
+	}
+}
+
 func (handler *Handler) GetMessDashboard(ctx *fiber.Ctx) error {
 	userID, errObjID := primitive.ObjectIDFromHex(ctx.Get("userID"))
 	if errObjID != nil {

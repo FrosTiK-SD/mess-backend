@@ -80,22 +80,35 @@ func main() {
 		adminAPI.Post("/mess", handler.CreateMess)
 		adminAPI.Get("/mess", handler.GetMess)
 		adminAPI.Put("/mess", handler.UpdateMess)
+		adminAPI.Delete("/mess", handler.DeleteMess)
 
 		adminAPI.Post("/hostel", handler.CreateHostel)
 		adminAPI.Get("/hostel", handler.GetHostel)
+		adminAPI.Put("/hostel", handler.UpdateHostel)
+		adminAPI.Delete("/hostel", handler.DeleteHostel)
 
 		adminAPI.Post("/meal", handler.CreateMeal)
 		adminAPI.Get("/meal", handler.GetMeal)
+		adminAPI.Put("/meal", handler.UpdateMeal)
+		adminAPI.Delete("/meal", handler.DeleteMeal)
 
 		adminAPI.Post("/meal-type", handler.CreateMealType)
 		adminAPI.Get("/meal-type", handler.GetMealType)
+		adminAPI.Put("/meal-type", handler.UpdateMealType)
+		adminAPI.Delete("/meal-type", handler.DeleteMealType)
 
 		adminAPI.Post("/menu-item", handler.CreateMenuItem)
 		adminAPI.Get("/menu-item", handler.GetMenuItem)
+		adminAPI.Put("/menu-item", handler.UpdateMenuItem)
+		adminAPI.Delete("/menu-item", handler.DeleteMenuItem)
 
 		adminAPI.Post("/room", handler.CreateRoom)
 
 		adminAPI.Post("/user", handler.CreateUser)
+		adminAPI.Get("/user", handler.GetUser)
+		adminAPI.Put("/user", handler.UpdateUser)
+		adminAPI.Delete("/user", handler.DeleteUser)
+
 		adminAPI.Get("/user/populated", handler.GetUserPopulated)
 		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
 	}

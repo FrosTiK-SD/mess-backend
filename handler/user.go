@@ -53,6 +53,45 @@ func (handler *Handler) GetUser(ctx *fiber.Ctx) error {
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found User with the given Mess ID", User, nil))
 }
 
+func (handler *Handler) UpdateUser(ctx *fiber.Ctx) error {
+	var updatedUser models.User
+
+	if err := ctx.BodyParser(&updatedUser); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	userID, errObjID := primitive.ObjectIDFromHex(ctx.Get("userID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
+	filter := bson.M{"_id": userID}
+	update := bson.M{"$set": updatedUser}
+
+	if _, err := collection.UpdateOne(ctx.Context(), filter, update); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "User Updated", nil, nil))
+}
+
+func (handler *Handler) DeleteUser(ctx *fiber.Ctx) error {
+	userID, errObjID := primitive.ObjectIDFromHex(ctx.Get("userID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
+	filter := bson.M{"_id": userID}
+
+	if _, err := collection.DeleteOne(ctx.Context(), filter); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "User Deleted", nil, nil))
+}
+
 func (handler *Handler) GetUserPopulated(ctx *fiber.Ctx) error {
 	var Users []map[string]interface{}
 	userID, errObjID := primitive.ObjectIDFromHex(ctx.Get("userID"))
