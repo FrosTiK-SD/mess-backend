@@ -47,7 +47,7 @@ func (handler *Handler) UpdateMess(ctx *fiber.Ctx) error {
 	var updateData models.Mess
 	messID, errObjID := primitive.ObjectIDFromHex(ctx.Get("messID"))
 	if errObjID != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid mess ID"})
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": errObjID.Error()})
 	}
 	if err := ctx.BodyParser(&updateData); err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -59,7 +59,7 @@ func (handler *Handler) UpdateMess(ctx *fiber.Ctx) error {
 	}
 	result, err := collection.UpdateOne(ctx.Context(), bson.M{"_id": messID}, update)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update mess"})
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	if result.MatchedCount == 0 {
@@ -72,12 +72,12 @@ func (handler *Handler) UpdateMess(ctx *fiber.Ctx) error {
 func (handler *Handler) DeleteMess(ctx *fiber.Ctx) error {
 	messID, errObjID := primitive.ObjectIDFromHex(ctx.Get("messID"))
 	if errObjID != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid mess ID"})
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": errObjID.Error()})
 	}
 
 	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MESSES)
 	if result, err := collection.DeleteOne(ctx.Context(), bson.M{"_id": messID}); err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to delete mess"})
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	} else {
 		if result.DeletedCount == 0 {
 			return ctx.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Mess not found"})
