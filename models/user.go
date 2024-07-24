@@ -21,11 +21,11 @@ type User struct {
 }
 
 type InstituteProfile struct {
-	StartYear  int    `json:"startYear,omitempty" bson:"startYear,omitempty"`
-	EndYear    int    `json:"endYear,omitempty" bson:"endYear,omitempty"`
-	RollNo     int    `json:"rollNo,omitempty" bson:"rollNo,omitempty"`
-	Department string `json:"department,omitempty" bson:"department,omitempty"`
-	Course     string `json:"course,omitempty" bson:"course,omitempty"`
+	StartYear  int    `json:"startYear" bson:"startYear"`
+	EndYear    int    `json:"endYear" bson:"endYear"`
+	RollNo     int    `json:"rollNo" bson:"rollNo"`
+	Department string `json:"department" bson:"department"`
+	Course     string `json:"course" bson:"course"`
 }
 
 type AllocationDetails struct {
