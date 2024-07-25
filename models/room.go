@@ -10,3 +10,8 @@ type Room struct {
 	Available bool               `json:"available" bson:"available" binding:"required"`
 	Remarks   string             `json:"remarks,omitempty" bson:"remarks,omitempty"`
 }
+
+type PopulatedRoom struct {
+	Hostel                    // Embedding Hostel struct
+	AllocatedTo []StudentMini `json:"allocatedTo"`
+}

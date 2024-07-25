@@ -38,3 +38,16 @@ type ManagingDetails struct {
 	Hostels []primitive.ObjectID `json:"hostels" bson:"hostels"`
 	Messes  []primitive.ObjectID `json:"messes" bson:"messes"`
 }
+
+type UserMini struct {
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	MiddleName string `json:"middleName"`
+	Email      string `json:"email"`
+	Mobile     string `json:"mobile"`
+}
+
+type StudentMini struct {
+	UserMini
+	InstituteProfile InstituteProfile `json:"instituteProfile"`
+}

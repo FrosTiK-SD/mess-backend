@@ -43,6 +43,82 @@ func (handler *Handler) GetHostel(ctx *fiber.Ctx) error {
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Hostel with the given ID", Hostel, nil))
 }
 
+func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
+	// TODO: add Access Level : Admins and caretakers of that particular hostel
+	var FPHostel models.FullyPopulatedHostel
+	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Get("hostelID"))
+	if errObjID != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": errObjID.Error()})
+	}
+	var Hostel models.Hostel
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_HOSTELS)
+	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": hostelID}).Decode(&Hostel); errFind != nil {
+		return errFind
+	}
+	// Get caretakers: caretakers are users with managingDetails.hostels containing the hostelID
+	caretakersCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
+	if cur, err := caretakersCollection.Find(ctx.Context(), bson.M{"managingDetails.hostels": hostelID}); err != nil {
+		return err
+	} else if err := cur.All(ctx.Context(), &FPHostel.Caretakers); err != nil {
+		return err
+	}
+	FPHostel.Hostel = Hostel
+	// Get rooms: list of Populated rooms with hostelID
+	var rooms []models.Room
+	roomsCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_ROOMS)
+	if cur, err := roomsCollection.Find(ctx.Context(), bson.M{"hostel": hostelID}); err != nil {
+		return err
+	} else if err := cur.All(ctx.Context(), &rooms); err != nil {
+		return err
+	}
+	// update allocatedTo Property of each room in rooms
+	for _, room := range rooms {
+		/*
+			A PopulatedRoom extends Hostel as follows:
+				- A property allocatedTo which is an array of StudentMini
+
+				A UserMini only has firstName, lastName, middleName , email and mobile
+				A StudentMini extends UserMini with instituteProfile
+		*/
+		var PRoom models.PopulatedRoom
+		PRoom.Hostel = Hostel
+		var students []models.StudentMini
+
+		// TODO: test rooms[i].AllocatedTo field props
+		PRoom.AllocatedTo = students
+
+		// first find users that have room allocated to them
+		var users []models.User
+		userCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
+		if cur, err := userCollection.Find(ctx.Context(), bson.M{"allocationDetails.room": room.ID}); err != nil {
+			return err
+		} else if err := cur.All(ctx.Context(), &users); err != nil {
+			return err
+		}
+		for _, user := range users {
+			// create a usermini from the user
+			var userMini models.UserMini
+			// TODO: how to fetch these fields from the user
+			// userMini.FirstName = user.FirstName
+			// userMini.LastName = user.LastName
+			// userMini.MiddleName = user.MiddleName
+			userMini.Email = user.Email
+			userMini.Mobile = user.Mobile
+			// create student mini from the usermini and instituteProfile
+			var studentMini models.StudentMini
+			studentMini.UserMini = userMini
+			studentMini.InstituteProfile = user.InstituteProfile
+			// append student mini to the allocatedTo property of the PRoom
+			PRoom.AllocatedTo = append(PRoom.AllocatedTo, studentMini)
+
+		}
+		// append PRoom to FPHostel.Rooms
+		FPHostel.Rooms = append(FPHostel.Rooms, PRoom)
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Fully Populated Hostel with the given ID", FPHostel, nil))
+}
+
 func (handler *Handler) UpdateHostel(ctx *fiber.Ctx) error {
 	var updatedHostel models.Hostel
 

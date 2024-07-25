@@ -84,6 +84,7 @@ func main() {
 
 		adminAPI.Post("/hostel", handler.CreateHostel)
 		adminAPI.Get("/hostel", handler.GetHostel)
+		adminAPI.Get("/hostel/fully-populated", handler.GetFullyPopulatedHostel)
 		adminAPI.Put("/hostel", handler.UpdateHostel)
 		adminAPI.Delete("/hostel", handler.DeleteHostel)
 
