@@ -53,23 +53,23 @@ func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 	var Hostel models.Hostel
 	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_HOSTELS)
 	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": hostelID}).Decode(&Hostel); errFind != nil {
-		return errFind
+		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{"error": errFind.Error()})
 	}
 	// Get caretakers: caretakers are users with managingDetails.hostels containing the hostelID
 	caretakersCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
 	if cur, err := caretakersCollection.Find(ctx.Context(), bson.M{"managingDetails.hostels": hostelID}); err != nil {
-		return err
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	} else if err := cur.All(ctx.Context(), &FPHostel.Caretakers); err != nil {
-		return err
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	FPHostel.Hostel = Hostel
 	// Get rooms: list of Populated rooms with hostelID
 	var rooms []models.Room
 	roomsCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_ROOMS)
 	if cur, err := roomsCollection.Find(ctx.Context(), bson.M{"hostel": hostelID}); err != nil {
-		return err
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	} else if err := cur.All(ctx.Context(), &rooms); err != nil {
-		return err
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	// update allocatedTo Property of each room in rooms
 	for _, room := range rooms {
@@ -91,9 +91,9 @@ func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 		var users []models.User
 		userCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
 		if cur, err := userCollection.Find(ctx.Context(), bson.M{"allocationDetails.room": room.ID}); err != nil {
-			return err
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 		} else if err := cur.All(ctx.Context(), &users); err != nil {
-			return err
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 		}
 		for _, user := range users {
 			// create a usermini from the user
