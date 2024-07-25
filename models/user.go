@@ -1,12 +1,14 @@
 package models
 
 import (
+	"github.com/FrosTiK-SD/mess-backend/constants"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
 	ID     primitive.ObjectID   `json:"_id" bson:"_id"`
 	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
+	Role   []constants.Role     `json:"roles" bson:"roles"`
 
 	// Not nil objectID in case of student
 	AllocationDetails AllocationDetails `json:"allocationDetails" bson:"allocationDetails"`

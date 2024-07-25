@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/FrosTiK-SD/mess-backend/constants"
+	"github.com/FrosTiK-SD/mess-backend/interfaces"
 	"github.com/FrosTiK-SD/mess-backend/models"
 	mongikDB "github.com/FrosTiK-SD/mongik/db"
 	mongikModels "github.com/FrosTiK-SD/mongik/models"
@@ -20,6 +21,29 @@ func GetUserByEmail(mongikClient *mongikModels.Mongik, email *string, noCache bo
 	}
 
 	user, err := mongikDB.AggregateOne[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, pipline, noCache)
+
+	return user, err
+
+}
+
+func GetUserPopulatedByEmail(mongikClient *mongikModels.Mongik, email *string, noCache bool) (interfaces.UserPopulated, error) {
+
+	pipline := []bson.M{
+		{
+			"$match": bson.M{
+				"email": *email,
+			},
+		}, {
+			"$lookup": bson.M{
+				"from":         "groups",
+				"localField":   "groups",
+				"foreignField": "_id",
+				"as":           "groups",
+			},
+		},
+	}
+
+	user, err := mongikDB.AggregateOne[interfaces.UserPopulated](mongikClient, constants.DB, constants.COLLECTION_USERS, pipline, noCache)
 
 	return user, err
 

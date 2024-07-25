@@ -20,7 +20,7 @@ func (h *Handler) FiberAuthenticateUser(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusForbidden, *errStr)
 	}
 
-	user, err := controller.GetUserByEmail(h.MongikClient, email, noCache)
+	user, err := controller.GetUserPopulatedByEmail(h.MongikClient, email, noCache)
 	fmt.Println(user)
 	if err != nil {
 		return fiber.NewError(fiber.StatusForbidden, err.Error())
