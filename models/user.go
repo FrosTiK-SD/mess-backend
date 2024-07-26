@@ -10,6 +10,10 @@ type User struct {
 	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
 	Role   []constants.Role     `json:"roles" bson:"roles"`
 
+	FirstName  string `json:"firstName" bson:"firstName"`
+	MiddleName string `json:"middleName" bson:"middleName"`
+	LastName   string `json:"lastName" bson:"lastName"`
+
 	// Not nil objectID in case of student
 	AllocationDetails AllocationDetails `json:"allocationDetails" bson:"allocationDetails"`
 	InstituteProfile  InstituteProfile  `json:"instituteProfile" bson:"instituteProfile"`

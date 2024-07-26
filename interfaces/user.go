@@ -9,6 +9,10 @@ type UserPopulated struct {
 	ID     primitive.ObjectID `json:"_id" bson:"_id"`
 	Groups []models.Group     `json:"groups" bson:"groups"` // populated
 
+	FirstName  string `json:"firstName" bson:"firstName"`
+	MiddleName string `json:"middleName" bson:"middleName"`
+	LastName   string `json:"lastName" bson:"lastName"`
+
 	// Not nil objectID in case of student
 	AllocationDetails models.AllocationDetails `json:"allocationDetails" bson:"allocationDetails"`
 	InstituteProfile  models.InstituteProfile  `json:"instituteProfile" bson:"instituteProfile"`
