@@ -62,7 +62,7 @@ func GetJWKs(cacheClient *bigcache.BigCache, noCache bool) (*jwk.Set, *string) {
 
 func VerifyToken(cacheClient *bigcache.BigCache, idToken string, defaultJwkSet *jwk.Set, noCache bool) (*string, *time.Time, *string) {
 	jwkSet := defaultJwkSet
-	if !noCache {
+	{
 		newJwkSet, jwkParsingError := GetJWKs(cacheClient, noCache)
 		if jwkParsingError != nil {
 			return nil, nil, jwkParsingError
