@@ -14,30 +14,17 @@ import (
 )
 
 func (handler *Handler) CreateUser(ctx *fiber.Ctx) error {
-	var User models.User
+	var user models.User
 
-	if err := ctx.BodyParser(&User); err != nil {
+	if err := ctx.BodyParser(&user); err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	User.ID = primitive.NewObjectID()
-
-	if User.ManagingDetails.Hostels == nil {
-		User.ManagingDetails.Hostels = make([]primitive.ObjectID, 0)
+	err := controller.CreateNewUser(handler.MongikClient, &user)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
-
-	if User.ManagingDetails.Messes == nil {
-		User.ManagingDetails.Messes = make([]primitive.ObjectID, 0)
-	}
-
-	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
-	if result, err := collection.InsertOne(ctx.Context(), User); err != nil {
-		return err
-	} else {
-		ctx.JSON(interfaces.GetGenericResponse(true, "User Created", result, nil))
-	}
-
-	return nil
+	return ctx.SendStatus(201)
 }
 
 func (handler *Handler) GetUser(ctx *fiber.Ctx) error {
