@@ -9,6 +9,7 @@ import (
 type UserPopulated struct {
 	ID     primitive.ObjectID `json:"_id" bson:"_id"`
 	Groups []models.Group     `json:"groups" bson:"groups"` // populated
+	Roles  []constants.Role   `json:"roles" bson:"roles"`
 
 	FirstName  string `json:"firstName" bson:"firstName"`
 	MiddleName string `json:"middleName" bson:"middleName"`
