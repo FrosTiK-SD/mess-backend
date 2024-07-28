@@ -19,12 +19,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/swagger"
+	"github.com/joho/godotenv"
 	jsoniter "github.com/json-iterator/go"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func main() {
+
+	godotenv.Load()
 
 	app := fiber.New(fiber.Config{
 		Prefork:           false,
@@ -112,6 +115,8 @@ func main() {
 
 		adminAPI.Get("/user/populated", handler.GetUserPopulated)
 		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
+
+		adminAPI.Get("/filteredStudents", handler.GetFilteredStudents)
 	}
 
 	caretakerAPI := app.Group("/caretaker")
