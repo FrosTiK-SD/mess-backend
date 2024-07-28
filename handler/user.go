@@ -189,3 +189,18 @@ func (h *Handler) GetFilteredUsers(ctx *fiber.Ctx) error {
 		"users": users,
 	})
 }
+
+func (h *Handler) AssignHostelToUsers(ctx *fiber.Ctx) error {
+	var reqBody interfaces.AssignHostelToUsersRequestBody
+
+	if err := ctx.BodyParser(&reqBody); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	err := controller.AssignHostelToUsers(h.MongikClient, reqBody.Hostel, reqBody.Users)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}

@@ -102,6 +102,7 @@ func main() {
 		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
 
 		adminAPI.Post("/userFiltered", handler.GetFilteredUsers)
+		adminAPI.Put("/user/assignHostel", handler.AssignHostelToUsers)
 	}
 
 	caretakerAPI := app.Group("/caretaker")

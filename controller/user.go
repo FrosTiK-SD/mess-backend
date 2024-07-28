@@ -103,3 +103,16 @@ func GetUserFromFilter(mongikClient *mongikModels.Mongik, userFilter *interfaces
 
 	return users, err
 }
+
+func AssignHostelToUsers(mongikClient *mongikModels.Mongik, hostel primitive.ObjectID, users []primitive.ObjectID) error {
+	filter := bson.M{
+		"_id": bson.M{"$in": users},
+	}
+	update := bson.M{
+		"$set": bson.M{
+			"allocationDetails.hostel": hostel,
+		}}
+	_, err := mongikDB.UpdateMany[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, filter, update)
+
+	return err
+}
