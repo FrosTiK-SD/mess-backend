@@ -172,3 +172,20 @@ func (h *Handler) CreateUserFromToken(ctx *fiber.Ctx) error {
 		"user": *user,
 	})
 }
+
+func (h *Handler) GetFilteredUsers(ctx *fiber.Ctx) error {
+	var userFilter interfaces.UserFilter
+	if err := ctx.BodyParser(&userFilter); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Improper Request Body")
+	}
+
+	users, err := controller.GetUserFromFilter(h.MongikClient, &userFilter)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"users": users,
+	})
+}

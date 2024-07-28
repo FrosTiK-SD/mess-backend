@@ -61,3 +61,45 @@ func CreateNewUser(mongikClient *mongikModels.Mongik, user *models.User) error {
 
 	return err
 }
+
+func GetUserFromFilter(mongikClient *mongikModels.Mongik, userFilter *interfaces.UserFilter) ([]models.User, error) {
+
+	matchStatement := bson.M{}
+
+	if len(userFilter.RollNos) != 0 {
+		matchStatement["instituteProfile.rollNo"] = bson.M{
+			"$in": userFilter.RollNos,
+		}
+	}
+
+	if len(userFilter.EndYear) != 0 {
+		matchStatement["instituteProfile.endYear"] = bson.M{
+			"$in": userFilter.EndYear,
+		}
+	}
+
+	if len(userFilter.Courses) != 0 {
+		matchStatement["instituteProfile.course"] = bson.M{
+			"$in": userFilter.Courses,
+		}
+	}
+
+	if len(userFilter.Department) != 0 {
+		matchStatement["instituteProfile.department"] = bson.M{
+			"$in": userFilter.Department,
+		}
+	}
+
+	if len(userFilter.StartYear) != 0 {
+		matchStatement["instituteProfile.startYear"] = bson.M{
+			"$in": userFilter.StartYear,
+		}
+	}
+
+	pipeline := []bson.M{{
+		"$match": matchStatement,
+	}}
+	users, err := mongikDB.Aggregate[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, pipeline, false)
+
+	return users, err
+}

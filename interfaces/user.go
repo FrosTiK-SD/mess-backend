@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"github.com/FrosTiK-SD/mess-backend/constants"
 	"github.com/FrosTiK-SD/mess-backend/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -23,4 +24,12 @@ type UserPopulated struct {
 	//Contact Details
 	Email  string `json:"email" bson:"email" binding:"required"`
 	Mobile string `json:"mobile" bson:"mobile"`
+}
+
+type UserFilter struct {
+	StartYear  []int                  `json:"startYear" binding:"required"`
+	EndYear    []int                  `json:"endYear" binding:"required"`
+	RollNos    []int                  `json:"rollNos" binding:"required"`
+	Department []constants.Department `json:"department" binding:"required"`
+	Courses    []constants.Course     `json:"courses" binding:"required"`
 }
