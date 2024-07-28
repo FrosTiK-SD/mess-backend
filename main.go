@@ -101,7 +101,7 @@ func main() {
 		adminAPI.Get("/user/populated", handler.GetUserPopulated)
 		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
 
-		adminAPI.Get("/filteredStudents", handler.GetFilteredStudents)
+		adminAPI.Post("/userFiltered", handler.GetFilteredUsers)
 	}
 
 	caretakerAPI := app.Group("/caretaker")
