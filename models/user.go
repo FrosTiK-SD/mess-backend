@@ -1,12 +1,18 @@
 package models
 
 import (
+	"github.com/FrosTiK-SD/mess-backend/constants"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
 	ID     primitive.ObjectID   `json:"_id" bson:"_id"`
 	Groups []primitive.ObjectID `json:"groups" bson:"groups"`
+	Role   []constants.Role     `json:"roles" bson:"roles"`
+
+	FirstName  string `json:"firstName" bson:"firstName"`
+	MiddleName string `json:"middleName" bson:"middleName"`
+	LastName   string `json:"lastName" bson:"lastName"`
 
 	// Not nil objectID in case of student
 	AllocationDetails AllocationDetails `json:"allocationDetails" bson:"allocationDetails"`
@@ -21,11 +27,11 @@ type User struct {
 }
 
 type InstituteProfile struct {
-	StartYear  int    `json:"startYear,omitempty" bson:"startYear,omitempty"`
-	EndYear    int    `json:"endYear,omitempty" bson:"endYear,omitempty"`
-	RollNo     int    `json:"rollNo,omitempty" bson:"rollNo,omitempty"`
-	Department string `json:"department,omitempty" bson:"department,omitempty"`
-	Course     string `json:"course,omitempty" bson:"course,omitempty"`
+	StartYear  int    `json:"startYear" bson:"startYear"`
+	EndYear    int    `json:"endYear" bson:"endYear"`
+	RollNo     int    `json:"rollNo" bson:"rollNo"`
+	Department string `json:"department" bson:"department"`
+	Course     string `json:"course" bson:"course"`
 }
 
 type AllocationDetails struct {

@@ -127,6 +127,12 @@ func main() {
 		caretakerAPI.Post("/meal/update/menu/by/date", handler.UpdateMealsByDate)
 	}
 
+	userAPI := app.Group("/user")
+	{
+		userAPI.Get("/token", handler.FiberAuthenticateUser, handler.GetUserFromToken)
+		userAPI.Post("/token", handler.CreateUserFromToken)
+	}
+
 	// Monitor
 	app.Get("/metrics", monitor.New())
 	app.Get("/swagger/*", swagger.HandlerDefault)

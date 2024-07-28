@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	"github.com/FrosTiK-SD/mess-backend/constants"
+	"github.com/FrosTiK-SD/mess-backend/controller"
 	"github.com/FrosTiK-SD/mess-backend/interfaces"
 	"github.com/FrosTiK-SD/mess-backend/models"
+	"github.com/FrosTiK-SD/mess-backend/utils"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -181,4 +183,44 @@ func (handler *Handler) ManageHostelMess(ctx *fiber.Ctx) error {
 	}
 
 	return nil
+}
+
+// Authenticated
+func (h *Handler) GetUserFromToken(ctx *fiber.Ctx) error {
+	user, ok := ctx.Locals(constants.SESSION).(interfaces.UserPopulated)
+
+	if !ok {
+		return fiber.NewError(fiber.StatusForbidden, "Authentication Failed")
+	}
+
+	return ctx.JSON(fiber.Map{
+		"user": user,
+	})
+}
+
+// Unauthenticated
+func (h *Handler) CreateUserFromToken(ctx *fiber.Ctx) error {
+	idToken := ctx.Get("token", "")
+	noCache := ctx.Get(constants.CACHE_CONTROL_HEADER, "") == constants.NO_CACHE
+
+	email, _, errStr := utils.VerifyToken(h.MongikClient.CacheClient, idToken, h.JwkSet, noCache)
+	if errStr != nil {
+		return fiber.NewError(fiber.StatusBadRequest, *errStr)
+	}
+	if !utils.IsInstituteEmail(*email) {
+		return fiber.NewError(fiber.StatusBadRequest, "Token Registration can only be done with Institute Mail")
+	}
+
+	user := new(models.User)
+	user.Email = *email
+
+	err := controller.CreateNewUser(h.MongikClient, user)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"user": *user,
+	})
 }
