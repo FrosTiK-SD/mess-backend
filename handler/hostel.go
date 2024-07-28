@@ -74,14 +74,14 @@ func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 	// update allocatedTo Property of each room in rooms
 	for _, room := range rooms {
 		/*
-			A PopulatedRoom extends Hostel as follows:
+			A PopulatedRoom extends Room as follows:
 				- A property allocatedTo which is an array of StudentMini
 
 				A UserMini only has firstName, lastName, middleName , email and mobile
 				A StudentMini extends UserMini with instituteProfile
 		*/
 		var PRoom models.PopulatedRoom
-		PRoom.Hostel = Hostel
+		PRoom.Room = room
 		var students []models.StudentMini
 
 		// TODO: test rooms[i].AllocatedTo field props

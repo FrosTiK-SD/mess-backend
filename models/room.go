@@ -12,6 +12,6 @@ type Room struct {
 }
 
 type PopulatedRoom struct {
-	Hostel                    // Embedding Hostel struct
+	Room                      // Embedding Room struct
 	AllocatedTo []StudentMini `json:"allocatedTo"`
 }
