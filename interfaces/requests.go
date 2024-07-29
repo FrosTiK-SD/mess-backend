@@ -6,3 +6,8 @@ type AssignHostelToUsersRequestBody struct {
 	Hostel primitive.ObjectID   `json:"hostel" binding:"required"`
 	Users  []primitive.ObjectID `json:"users" binding:"required"`
 }
+
+type AssignMessToUsersRequestBody struct {
+	Mess  primitive.ObjectID   `json:"mess" binding:"required"`
+	Users []primitive.ObjectID `json:"users" binding:"required"`
+}

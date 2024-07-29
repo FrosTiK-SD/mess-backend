@@ -116,3 +116,17 @@ func AssignHostelToUsers(mongikClient *mongikModels.Mongik, hostel primitive.Obj
 
 	return err
 }
+
+func AssignMessToUsers(mongikClient *mongikModels.Mongik, mess primitive.ObjectID, users []primitive.ObjectID) error {
+	filter := bson.M{
+		"_id": bson.M{"$in": users},
+	}
+	update := bson.M{
+		"$set": bson.M{
+			"allocationDetails.mess": mess,
+		},
+	}
+	_, err := mongikDB.UpdateMany[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, filter, update)
+
+	return err
+}

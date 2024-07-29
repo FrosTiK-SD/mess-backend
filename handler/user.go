@@ -204,3 +204,19 @@ func (h *Handler) AssignHostelToUsers(ctx *fiber.Ctx) error {
 
 	return nil
 }
+
+func (h *Handler) AssignMessToUsers(ctx *fiber.Ctx) error {
+	var reqBody interfaces.AssignMessToUsersRequestBody
+
+	if err := ctx.BodyParser(&reqBody); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := controller.AssignMessToUsers(h.MongikClient, reqBody.Mess, reqBody.Users)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}
