@@ -43,6 +43,45 @@ func (handler *Handler) GetMeal(ctx *fiber.Ctx) error {
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Meal with the given Meal ID", Meal, nil))
 }
 
+func (handler *Handler) UpdateMeal(ctx *fiber.Ctx) error {
+	var updatedMeal models.Meal
+
+	if err := ctx.BodyParser(&updatedMeal); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	mealID, errObjID := primitive.ObjectIDFromHex(ctx.Get("mealID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEALS)
+	filter := bson.M{"_id": mealID}
+	update := bson.M{"$set": updatedMeal}
+
+	if _, err := collection.UpdateOne(ctx.Context(), filter, update); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "Meal Updated", nil, nil))
+}
+
+func (handler *Handler) DeleteMeal(ctx *fiber.Ctx) error {
+	mealID, errObjID := primitive.ObjectIDFromHex(ctx.Get("mealID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEALS)
+	filter := bson.M{"_id": mealID}
+
+	if _, err := collection.DeleteOne(ctx.Context(), filter); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "Meal Deleted", nil, nil))
+}
+
 func (handler *Handler) CreateMealType(ctx *fiber.Ctx) error {
 	var MealType models.MealType
 
@@ -73,6 +112,45 @@ func (handler *Handler) GetMealType(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found MealType with the given Meal ID", MealType, nil))
+}
+
+func (handler *Handler) UpdateMealType(ctx *fiber.Ctx) error {
+	var updatedMealType models.MealType
+
+	if err := ctx.BodyParser(&updatedMealType); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	mealTypeID, errObjID := primitive.ObjectIDFromHex(ctx.Get("mealTypeID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEAL_TYPES)
+	filter := bson.M{"_id": mealTypeID}
+	update := bson.M{"$set": updatedMealType}
+
+	if _, err := collection.UpdateOne(ctx.Context(), filter, update); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "MealType Updated", nil, nil))
+}
+
+func (handler *Handler) DeleteMealType(ctx *fiber.Ctx) error {
+	mealTypeID, errObjID := primitive.ObjectIDFromHex(ctx.Get("mealTypeID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MEAL_TYPES)
+	filter := bson.M{"_id": mealTypeID}
+
+	if _, err := collection.DeleteOne(ctx.Context(), filter); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "MealType Deleted", nil, nil))
 }
 
 func (handler *Handler) GetAllMealTypesOfAMess(ctx *fiber.Ctx) error {

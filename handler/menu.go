@@ -43,6 +43,45 @@ func (handler *Handler) GetMenuItem(ctx *fiber.Ctx) error {
 	return ctx.JSON(interfaces.GetGenericResponse(true, "Found MenuItem with the given ID", MenuItem, nil))
 }
 
+func (handler *Handler) UpdateMenuItem(ctx *fiber.Ctx) error {
+	var updatedMenuItem models.MenuItem
+
+	if err := ctx.BodyParser(&updatedMenuItem); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	menuItemID, errObjID := primitive.ObjectIDFromHex(ctx.Get("menuItemID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MENU_ITEMS)
+	filter := bson.M{"_id": menuItemID}
+	update := bson.M{"$set": updatedMenuItem}
+
+	if _, err := collection.UpdateOne(ctx.Context(), filter, update); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "MenuItem Updated", nil, nil))
+}
+
+func (handler *Handler) DeleteMenuItem(ctx *fiber.Ctx) error {
+	menuItemID, errObjID := primitive.ObjectIDFromHex(ctx.Get("menuItemID"))
+	if errObjID != nil {
+		return errObjID
+	}
+
+	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MENU_ITEMS)
+	filter := bson.M{"_id": menuItemID}
+
+	if _, err := collection.DeleteOne(ctx.Context(), filter); err != nil {
+		return err
+	}
+
+	return ctx.JSON(interfaces.GetGenericResponse(true, "MenuItem Deleted", nil, nil))
+}
+
 func (handler *Handler) GetAllMenuItemsOfAMess(ctx *fiber.Ctx) error {
 	var MenuItems []models.MenuItem
 	messID, errObjID := primitive.ObjectIDFromHex(ctx.Get("messID"))
