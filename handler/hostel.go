@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/FrosTiK-SD/mess-backend/constants"
+	"github.com/FrosTiK-SD/mess-backend/controller"
 	"github.com/FrosTiK-SD/mess-backend/interfaces"
 	"github.com/FrosTiK-SD/mess-backend/models"
 	"github.com/gofiber/fiber/v2"
@@ -12,20 +13,21 @@ import (
 )
 
 func (handler *Handler) CreateHostel(ctx *fiber.Ctx) error {
-	var Hostel models.Hostel
+	var hostel models.Hostel
 
-	if err := ctx.BodyParser(&Hostel); err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	if err := ctx.BodyParser(&hostel); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	Hostel.ID = primitive.NewObjectID()
+	err := controller.CreateHostel(handler.MongikClient, &hostel)
 
-	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_HOSTELS)
-	if result, err := collection.InsertOne(ctx.Context(), Hostel); err != nil {
-		return err
-	} else {
-		return ctx.JSON(interfaces.GetGenericResponse(true, "Menu Item Created", result, nil))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
+
+	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"hostel": hostel,
+	})
 }
 
 func (handler *Handler) GetHostel(ctx *fiber.Ctx) error {
