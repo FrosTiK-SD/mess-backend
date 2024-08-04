@@ -119,6 +119,11 @@ func main() {
 		adminAPI.Post("/userFiltered", handler.GetFilteredUsers)
 		adminAPI.Put("/user/assignHostel", handler.AssignHostelToUsers)
 		adminAPI.Put("/user/assignMess", handler.AssignMessToUsers)
+
+		adminRooms := adminAPI.Group("/rooms")
+		{
+			adminRooms.Post("/generate", handler.GenerateRooms)
+		}
 	}
 
 	caretakerAPI := app.Group("/caretaker")
