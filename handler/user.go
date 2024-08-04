@@ -259,3 +259,23 @@ func (h *Handler) AssignMessToUsers(ctx *fiber.Ctx) error {
 
 	return nil
 }
+
+func (h *Handler) AssignRoomToUser(ctx *fiber.Ctx) error {
+	type RequestBody struct {
+		RollNo int                `json:"rollNo"`
+		Room   primitive.ObjectID `json:"room"`
+	}
+	var reqBody RequestBody
+
+	if err := ctx.BodyParser(&reqBody); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := controller.AssignRoomToUser(h.MongikClient, reqBody.RollNo, reqBody.Room)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}

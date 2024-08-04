@@ -120,6 +120,7 @@ func main() {
 		adminAPI.Post("/userFiltered", handler.GetFilteredUsers)
 		adminAPI.Put("/user/assignHostel", handler.AssignHostelToUsers)
 		adminAPI.Put("/user/assignMess", handler.AssignMessToUsers)
+		adminAPI.Put("/user/assignRoom", handler.AssignRoomToUser)
 
 		adminRooms := adminAPI.Group("/rooms")
 		{

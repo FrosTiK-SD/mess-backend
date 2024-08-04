@@ -130,3 +130,17 @@ func AssignMessToUsers(mongikClient *mongikModels.Mongik, mess primitive.ObjectI
 
 	return err
 }
+
+func AssignRoomToUser(mongikClient *mongikModels.Mongik, rollNo int, room primitive.ObjectID) error {
+	filter := bson.M{
+		"instituteProfile.rollNo": rollNo,
+	}
+	update := bson.M{
+		"$set": bson.M{
+			"allocationDetails.room": room,
+		},
+	}
+	_, err := mongikDB.UpdateOne[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, filter, update)
+
+	return err
+}
