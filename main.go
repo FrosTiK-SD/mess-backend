@@ -85,11 +85,11 @@ func main() {
 		adminAPI.Put("/mess", handler.UpdateMess)
 		adminAPI.Delete("/mess", handler.DeleteMess)
 
-		adminAPI.Post("/hostel", handler.CreateHostel)
-		adminAPI.Get("/hostel", handler.GetHostel)
-		adminAPI.Get("/hostel/fully-populated", handler.GetFullyPopulatedHostel)
-		adminAPI.Put("/hostel", handler.UpdateHostel)
-		adminAPI.Delete("/hostel", handler.DeleteHostel)
+		adminAPI.Post("/hostels", handler.CreateHostel)
+		adminAPI.Get("/hostels", handler.GetAllHostels)
+		adminAPI.Get("/hostels/:hostelId", handler.GetHostelById)
+		adminAPI.Put("/hostels", handler.UpdateHostel)
+		adminAPI.Delete("/hostels", handler.DeleteHostel)
 
 		adminAPI.Post("/meal", handler.CreateMeal)
 		adminAPI.Get("/meal", handler.GetMeal)
@@ -143,8 +143,12 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	port = ":" + port
+	if os.Getenv("APP_ENV") == "dev" {
+		port = "localhost" + port
+	}
 
 	fmt.Println("Starting Server on PORT : ", port)
 
-	app.Listen(":" + port)
+	app.Listen(port)
 }

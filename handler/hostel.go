@@ -12,6 +12,18 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func (h *Handler) GetAllHostels(ctx *fiber.Ctx) error {
+	hostels, err := controller.GetAllHostels(h.MongikClient)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"hostels": hostels,
+	})
+}
+
 func (handler *Handler) CreateHostel(ctx *fiber.Ctx) error {
 	var hostel models.Hostel
 
@@ -30,19 +42,21 @@ func (handler *Handler) CreateHostel(ctx *fiber.Ctx) error {
 	})
 }
 
-func (handler *Handler) GetHostel(ctx *fiber.Ctx) error {
-	var Hostel models.Hostel
-	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Get("hostelID"))
+func (handler *Handler) GetHostelById(ctx *fiber.Ctx) error {
+	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Params("hostelID"))
 	if errObjID != nil {
 		return errObjID
 	}
 
-	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_HOSTELS)
-	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": hostelID}).Decode(&Hostel); errFind != nil {
-		return errFind
+	hostel, err := controller.GetHostelById(handler.MongikClient, hostelID)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Hostel with the given ID", Hostel, nil))
+	return ctx.JSON(fiber.Map{
+		"hostel": hostel,
+	})
 }
 
 func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
