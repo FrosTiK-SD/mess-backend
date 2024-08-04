@@ -62,7 +62,7 @@ func (handler *Handler) GetHostelById(ctx *fiber.Ctx) error {
 func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 	// TODO: add Access Level : Admins and caretakers of that particular hostel
 	var FPHostel models.FullyPopulatedHostel
-	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Get("hostelID"))
+	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Params("hostelId"))
 	if errObjID != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": errObjID.Error()})
 	}
@@ -128,11 +128,19 @@ func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 			PRoom.AllocatedTo = append(PRoom.AllocatedTo, studentMini)
 
 		}
+		if PRoom.AllocatedTo == nil {
+			PRoom.AllocatedTo = make([]models.StudentMini, 0)
+		}
 		// append PRoom to FPHostel.Rooms
 		FPHostel.Rooms = append(FPHostel.Rooms, PRoom)
 	}
+	if FPHostel.Caretakers == nil {
+		FPHostel.Caretakers = make([]models.UserMini, 0)
+	}
 
-	return ctx.JSON(interfaces.GetGenericResponse(true, "Found Fully Populated Hostel with the given ID", FPHostel, nil))
+	return ctx.JSON(fiber.Map{
+		"hostel": FPHostel,
+	})
 }
 
 func (handler *Handler) UpdateHostel(ctx *fiber.Ctx) error {
