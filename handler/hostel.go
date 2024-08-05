@@ -45,17 +45,18 @@ func (handler *Handler) GetHostel(ctx *fiber.Ctx) error {
 
 func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 	// TODO: add Access Level : Admins and caretakers of that particular hostel
-	var FPHostel models.FullyPopulatedHostel
+	FPHostel := models.FullyPopulatedHostel{Rooms: []models.PopulatedRoom{}, Caretakers: []models.UserMini{}}
 	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Get("hostelID"))
 	if errObjID != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": errObjID.Error()})
 	}
+	// get hostel from hostel collection
 	var Hostel models.Hostel
 	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_HOSTELS)
 	if errFind := collection.FindOne(ctx.Context(), bson.M{"_id": hostelID}).Decode(&Hostel); errFind != nil {
 		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{"error": errFind.Error()})
 	}
-	// Get caretakers: caretakers are users with managingDetails.hostels containing the hostelID
+	// Get caretakers from users: caretakers are users with managingDetails.hostels containing the hostelID
 	caretakersCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
 	if cur, err := caretakersCollection.Find(ctx.Context(), bson.M{"managingDetails.hostels": hostelID}); err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -63,7 +64,7 @@ func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	FPHostel.Hostel = Hostel
-	// Get rooms: list of Populated rooms with hostelID
+	// Get rooms from rooms collection: list of Populated rooms with hostelID
 	var rooms []models.Room
 	roomsCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_ROOMS)
 	if cur, err := roomsCollection.Find(ctx.Context(), bson.M{"hostel": hostelID}); err != nil {
@@ -71,6 +72,23 @@ func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 	} else if err := cur.All(ctx.Context(), &rooms); err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
+
+	// Get all users allocated to the rooms of the hostel in one query
+	var users []models.User
+	userCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
+	if cur, err := userCollection.Find(ctx.Context(), bson.M{"allocationDetails.hostel": hostelID}); err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	} else if err := cur.All(ctx.Context(), &users); err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// Create a map of room ID to allocated users
+	roomToUsers := make(map[primitive.ObjectID][]models.User)
+	for _, user := range users {
+		roomID := user.AllocationDetails.Room
+		roomToUsers[roomID] = append(roomToUsers[roomID], user)
+	}
+
 	// update allocatedTo Property of each room in rooms
 	for _, room := range rooms {
 		/*
@@ -84,35 +102,19 @@ func (handler *Handler) GetFullyPopulatedHostel(ctx *fiber.Ctx) error {
 		PRoom.Room = room
 		var students []models.StudentMini
 
-		// TODO: test rooms[i].AllocatedTo field props
-		PRoom.AllocatedTo = students
-
-		// first find users that have room allocated to them
-		var users []models.User
-		userCollection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_USERS)
-		if cur, err := userCollection.Find(ctx.Context(), bson.M{"allocationDetails.room": room.ID}); err != nil {
-			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-		} else if err := cur.All(ctx.Context(), &users); err != nil {
-			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-		}
-		for _, user := range users {
-			// create a usermini from the user
+		for _, user := range roomToUsers[room.ID] {
 			var userMini models.UserMini
-			// TODO: how to fetch these fields from the user
-			// userMini.FirstName = user.FirstName
-			// userMini.LastName = user.LastName
-			// userMini.MiddleName = user.MiddleName
 			userMini.Email = user.Email
 			userMini.Mobile = user.Mobile
-			// create student mini from the usermini and instituteProfile
+
 			var studentMini models.StudentMini
 			studentMini.UserMini = userMini
 			studentMini.InstituteProfile = user.InstituteProfile
-			// append student mini to the allocatedTo property of the PRoom
-			PRoom.AllocatedTo = append(PRoom.AllocatedTo, studentMini)
 
+			students = append(students, studentMini)
 		}
-		// append PRoom to FPHostel.Rooms
+
+		PRoom.AllocatedTo = students
 		FPHostel.Rooms = append(FPHostel.Rooms, PRoom)
 	}
 
