@@ -115,6 +115,7 @@ func main() {
 		adminAPI.Delete("/user", handler.DeleteUser)
 
 		adminAPI.Get("/user/populated", handler.GetUserPopulated)
+		adminAPI.Get("/user/rollNo/:rollNo", handler.GetUserByRollNo)
 		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
 
 		adminAPI.Post("/userFiltered", handler.GetFilteredUsers)

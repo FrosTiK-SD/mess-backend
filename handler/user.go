@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/FrosTiK-SD/mess-backend/constants"
 	"github.com/FrosTiK-SD/mess-backend/controller"
@@ -278,4 +279,21 @@ func (h *Handler) AssignRoomToUser(ctx *fiber.Ctx) error {
 	}
 
 	return nil
+}
+
+func (h *Handler) GetUserByRollNo(ctx *fiber.Ctx) error {
+	rollNo, err := strconv.ParseInt(ctx.Params("rollNo", ""), 10, 64)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Could not parse rollNo")
+	}
+
+	user, err := controller.GetUserByRollNo(h.MongikClient, rollNo, false)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"user": user,
+	})
 }
