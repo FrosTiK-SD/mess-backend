@@ -175,7 +175,7 @@ func (handler *Handler) ManageHostelMess(ctx *fiber.Ctx) error {
 
 // Authenticated
 func (h *Handler) GetUserFromToken(ctx *fiber.Ctx) error {
-	user, ok := ctx.Locals(constants.SESSION).(interfaces.UserPopulated)
+	user, ok := ctx.Locals(constants.SESSION).(models.User)
 
 	if !ok {
 		return fiber.NewError(fiber.StatusForbidden, "Authentication Failed")

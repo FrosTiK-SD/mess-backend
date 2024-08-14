@@ -77,71 +77,71 @@ func main() {
 
 	app.Get("/hello", handler.Hello)
 
-	adminAPI := app.Group("/admin")
-	{
+	// adminAPI := app.Group("/admin")
+	// {
 
-		adminAPI.Post("/mess", handler.CreateMess)
-		adminAPI.Get("/mess", handler.GetMess)
-		adminAPI.Put("/mess", handler.UpdateMess)
-		adminAPI.Delete("/mess", handler.DeleteMess)
+	// 	adminAPI.Post("/mess", handler.CreateMess)
+	// 	adminAPI.Get("/mess", handler.GetMess)
+	// 	adminAPI.Put("/mess", handler.UpdateMess)
+	// 	adminAPI.Delete("/mess", handler.DeleteMess)
 
-		adminAPI.Post("/hostels", handler.CreateHostel)
-		adminAPI.Get("/hostels", handler.GetAllHostels)
-		adminAPI.Get("/hostels/:hostelId", handler.GetHostelById)
-		adminAPI.Get("/populatedHostels/:hostelId", handler.GetFullyPopulatedHostel)
-		adminAPI.Put("/hostels", handler.UpdateHostel)
-		adminAPI.Delete("/hostels", handler.DeleteHostel)
+	// 	adminAPI.Post("/hostels", handler.CreateHostel)
+	// 	adminAPI.Get("/hostels", handler.GetAllHostels)
+	// 	adminAPI.Get("/hostels/:hostelId", handler.GetHostelById)
+	// 	// adminAPI.Get("/populatedHostels/:hostelId", handler.GetFullyPopulatedHostel)
+	// 	adminAPI.Put("/hostels", handler.UpdateHostel)
+	// 	adminAPI.Delete("/hostels", handler.DeleteHostel)
 
-		adminAPI.Post("/meal", handler.CreateMeal)
-		adminAPI.Get("/meal", handler.GetMeal)
-		adminAPI.Put("/meal", handler.UpdateMeal)
-		adminAPI.Delete("/meal", handler.DeleteMeal)
+	// 	adminAPI.Post("/meal", handler.CreateMeal)
+	// 	adminAPI.Get("/meal", handler.GetMeal)
+	// 	adminAPI.Put("/meal", handler.UpdateMeal)
+	// 	adminAPI.Delete("/meal", handler.DeleteMeal)
 
-		adminAPI.Post("/meal-type", handler.CreateMealType)
-		adminAPI.Get("/meal-type", handler.GetMealType)
-		adminAPI.Put("/meal-type", handler.UpdateMealType)
-		adminAPI.Delete("/meal-type", handler.DeleteMealType)
+	// 	adminAPI.Post("/meal-type", handler.CreateMealType)
+	// 	adminAPI.Get("/meal-type", handler.GetMealType)
+	// 	adminAPI.Put("/meal-type", handler.UpdateMealType)
+	// 	adminAPI.Delete("/meal-type", handler.DeleteMealType)
 
-		adminAPI.Post("/menu-item", handler.CreateMenuItem)
-		adminAPI.Get("/menu-item", handler.GetMenuItem)
-		adminAPI.Put("/menu-item", handler.UpdateMenuItem)
-		adminAPI.Delete("/menu-item", handler.DeleteMenuItem)
+	// 	adminAPI.Post("/menu-item", handler.CreateMenuItem)
+	// 	adminAPI.Get("/menu-item", handler.GetMenuItem)
+	// 	adminAPI.Put("/menu-item", handler.UpdateMenuItem)
+	// 	adminAPI.Delete("/menu-item", handler.DeleteMenuItem)
 
-		adminAPI.Post("/room", handler.CreateRoom)
+	// 	adminAPI.Post("/room", handler.CreateRoom)
 
-		adminAPI.Post("/user", handler.CreateUser)
-		adminAPI.Get("/user", handler.GetUser)
-		adminAPI.Put("/user", handler.UpdateUser)
-		adminAPI.Delete("/user", handler.DeleteUser)
+	// 	adminAPI.Post("/user", handler.CreateUser)
+	// 	adminAPI.Get("/user", handler.GetUser)
+	// 	adminAPI.Put("/user", handler.UpdateUser)
+	// 	adminAPI.Delete("/user", handler.DeleteUser)
 
-		adminAPI.Get("/user/populated", handler.GetUserPopulated)
-		adminAPI.Get("/user/rollNo/:rollNo", handler.GetUserByRollNo)
-		adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
+	// 	adminAPI.Get("/user/populated", handler.GetUserPopulated)
+	// 	adminAPI.Get("/user/rollNo/:rollNo", handler.GetUserByRollNo)
+	// 	adminAPI.Post("/user/manage/hostel-mess", handler.ManageHostelMess)
 
-		adminAPI.Post("/userFiltered", handler.GetFilteredUsers)
-		adminAPI.Put("/user/assignHostel", handler.AssignHostelToUsers)
-		adminAPI.Put("/user/assignMess", handler.AssignMessToUsers)
-		adminAPI.Put("/user/assignRoom", handler.AssignRoomToUser)
+	// 	adminAPI.Post("/userFiltered", handler.GetFilteredUsers)
+	// 	adminAPI.Put("/user/assignHostel", handler.AssignHostelToUsers)
+	// 	adminAPI.Put("/user/assignMess", handler.AssignMessToUsers)
+	// 	adminAPI.Put("/user/assignRoom", handler.AssignRoomToUser)
 
-		adminRooms := adminAPI.Group("/rooms")
-		{
-			adminRooms.Post("/generate", handler.GenerateRooms)
-		}
-	}
+	// 	adminRooms := adminAPI.Group("/rooms")
+	// 	{
+	// 		adminRooms.Post("/generate", handler.GenerateRooms)
+	// 	}
+	// }
 
-	caretakerAPI := app.Group("/caretaker")
-	{
-		caretakerAPI.Get("/mess/dashboard", handler.GetMessDashboard)
-		caretakerAPI.Get("/menu-item/all", handler.GetAllMenuItemsOfAMess)
-		caretakerAPI.Get("/meal-type/all", handler.GetAllMealTypesOfAMess)
-		caretakerAPI.Post("/meal/update/menu/by/date", handler.UpdateMealsByDate)
-	}
+	// caretakerAPI := app.Group("/caretaker")
+	// {
+	// 	caretakerAPI.Get("/mess/dashboard", handler.GetMessDashboard)
+	// 	caretakerAPI.Get("/menu-item/all", handler.GetAllMenuItemsOfAMess)
+	// 	caretakerAPI.Get("/meal-type/all", handler.GetAllMealTypesOfAMess)
+	// 	caretakerAPI.Post("/meal/update/menu/by/date", handler.UpdateMealsByDate)
+	// }
 
-	userAPI := app.Group("/user")
-	{
-		userAPI.Get("/token", handler.FiberAuthenticateUser, handler.GetUserFromToken)
-		userAPI.Post("/token", handler.CreateUserFromToken)
-	}
+	// userAPI := app.Group("/user")
+	// {
+	// 	userAPI.Get("/token", handler.FiberAuthenticateUser, handler.GetUserFromToken)
+	// 	userAPI.Post("/token", handler.CreateUserFromToken)
+	// }
 
 	// Monitor
 	app.Get("/metrics", monitor.New())

@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"strconv"
-
 	"github.com/FrosTiK-SD/mess-backend/constants"
 	"github.com/FrosTiK-SD/mess-backend/models"
 	mongikDB "github.com/FrosTiK-SD/mongik/db"
@@ -16,10 +14,10 @@ func GenerateRooms(mongikClient *mongikModels.Mongik, hostelId primitive.ObjectI
 		newRooms[idx] = models.Room{
 			ID:        primitive.NewObjectID(),
 			Hostel:    hostelId,
-			Name:      strconv.Itoa(rangeStart + idx),
+			Number:    rangeStart + idx,
 			Floor:     0,
 			Available: true,
-			Remarks:   "",
+			Note:      "",
 		}
 	}
 	_, err := mongikDB.InsertMany[models.Room](mongikClient, constants.DB, constants.COLLECTION_ROOMS, newRooms)

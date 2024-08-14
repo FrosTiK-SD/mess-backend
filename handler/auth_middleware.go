@@ -3,11 +3,10 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"slices"
 
 	"github.com/FrosTiK-SD/mess-backend/constants"
 	"github.com/FrosTiK-SD/mess-backend/controller"
-	"github.com/FrosTiK-SD/mess-backend/interfaces"
+	"github.com/FrosTiK-SD/mess-backend/models"
 	"github.com/FrosTiK-SD/mess-backend/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +20,7 @@ func (h *Handler) FiberAuthenticateUser(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusForbidden, *errStr)
 	}
 
-	user, err := controller.GetUserPopulatedByEmail(h.MongikClient, email, noCache)
+	user, err := controller.GetUserByEmail(h.MongikClient, email, noCache)
 	if err != nil {
 		return fiber.NewError(fiber.StatusForbidden, err.Error())
 	}
@@ -44,17 +43,18 @@ func (h *Handler) GetAccessControlHandler(predicate Predicate) func(ctx *fiber.C
 	}
 }
 
-func HasRoles(roles ...string) Predicate {
+func HasRoleIn(roles ...string) Predicate {
 	return func(c *fiber.Ctx) error {
-		user, ok := c.Locals(constants.SESSION).(interfaces.UserPopulated)
+		user, ok := c.Locals(constants.SESSION).(models.User)
 		if !ok {
 			return errors.New("Could not find user")
 		}
-		allRoles := utils.GetAllRoles(&user)
+		authorized := false
 		for ridx := range roles {
-			if !slices.Contains(allRoles, roles[ridx]) {
-				return errors.New(fmt.Sprintf(`User Does not have Role %s`, roles[ridx]))
-			}
+			authorized = authorized || (roles[ridx] == user.Role)
+		}
+		if !authorized {
+			return errors.New(fmt.Sprintf(`User is not authorized to perform this action`))
 		}
 
 		return nil

@@ -28,35 +28,9 @@ func GetUserByEmail(mongikClient *mongikModels.Mongik, email *string, noCache bo
 
 }
 
-func GetUserPopulatedByEmail(mongikClient *mongikModels.Mongik, email *string, noCache bool) (interfaces.UserPopulated, error) {
-
-	pipline := []bson.M{
-		{
-			"$match": bson.M{
-				"email": *email,
-			},
-		}, {
-			"$lookup": bson.M{
-				"from":         "groups",
-				"localField":   "groups",
-				"foreignField": "_id",
-				"as":           "groups",
-			},
-		},
-	}
-
-	user, err := mongikDB.AggregateOne[interfaces.UserPopulated](mongikClient, constants.DB, constants.COLLECTION_USERS, pipline, noCache)
-
-	return user, err
-
-}
-
 func CreateNewUser(mongikClient *mongikModels.Mongik, user *models.User) error {
 	if user.ID.IsZero() {
 		user.ID = primitive.NewObjectID()
-	}
-	if user.Groups == nil {
-		user.Groups = make([]primitive.ObjectID, 0)
 	}
 
 	_, err := mongikDB.InsertOne[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, *user)
