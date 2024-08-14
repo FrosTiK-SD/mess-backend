@@ -77,6 +77,11 @@ func main() {
 
 	app.Get("/hello", handler.Hello)
 
+	apiV1 := app.Group("/api/v1")
+	{
+		apiV1.Get("/token/user", handler.FiberAuthenticateUser, handler.GetUserFromToken)
+		apiV1.Post("/token/user", handler.CreateUserFromToken)
+	}
 	// adminAPI := app.Group("/admin")
 	// {
 
