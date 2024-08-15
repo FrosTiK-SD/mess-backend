@@ -148,20 +148,17 @@ func (handler *Handler) UpdateHostel(ctx *fiber.Ctx) error {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Get("hostelID"))
+	hostelID, errObjID := primitive.ObjectIDFromHex(ctx.Params("hostelID"))
 	if errObjID != nil {
 		return errObjID
 	}
 
-	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_HOSTELS)
-	filter := bson.M{"_id": hostelID}
-	update := bson.M{"$set": updatedHostel}
-
-	if _, err := collection.UpdateOne(ctx.Context(), filter, update); err != nil {
-		return err
+	err := controller.UpdateHostel(handler.MongikClient, hostelID, &updatedHostel)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	return ctx.JSON(interfaces.GetGenericResponse(true, "Hostel Updated", nil, nil))
+	return nil
 }
 
 func (handler *Handler) DeleteHostel(ctx *fiber.Ctx) error {

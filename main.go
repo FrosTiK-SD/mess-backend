@@ -81,6 +81,17 @@ func main() {
 	{
 		apiV1.Get("/token/user", handler.FiberAuthenticateUser, handler.GetUserFromToken)
 		apiV1.Post("/token/user", handler.CreateUserFromToken)
+
+		hostels := apiV1.Group("/hostels")
+		{
+			hostels.Get("", handler.GetAllHostels)
+			hostels.Post("", handler.CreateHostel)
+			hostels.Get("/:hostelID", handler.GetHostelById)
+			hostels.Put("/:hostelID", handler.UpdateHostel)
+			hostels.Get("/:hostelID/rooms", handler.GetHostelRooms)
+			hostels.Post("/:hostelID/batch/rooms", handler.BatchCreateHostelRooms)
+		}
+
 	}
 	// adminAPI := app.Group("/admin")
 	// {

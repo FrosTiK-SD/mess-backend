@@ -12,13 +12,17 @@ import (
 func GetAllHostels(mongikClient *mongikModels.Mongik) ([]models.Hostel, error) {
 	hostels, err := mongikDB.Find[models.Hostel](mongikClient, constants.DB, constants.COLLECTION_HOSTELS, bson.M{}, false)
 
+	if hostels == nil {
+		hostels = make([]models.Hostel, 0)
+	}
+
 	return hostels, err
 }
 
-func GetHostelById(mongikClient *mongikModels.Mongik, hostelId primitive.ObjectID) (models.Hostel, error) {
+func GetHostelById(mongikClient *mongikModels.Mongik, hostelID primitive.ObjectID) (models.Hostel, error) {
 	pipeline := []bson.M{{
 		"$match": bson.M{
-			"_id": hostelId,
+			"_id": hostelID,
 		},
 	}}
 	hostel, err := mongikDB.AggregateOne[models.Hostel](mongikClient, constants.DB, constants.COLLECTION_HOSTELS, pipeline, false)
@@ -35,4 +39,18 @@ func CreateHostel(mongikClient *mongikModels.Mongik, hostel *models.Hostel) erro
 
 	return err
 
+}
+
+func UpdateHostel(mongikClient *mongikModels.Mongik, hostelID primitive.ObjectID, updatedHostel *models.Hostel) error {
+	updatedHostel.ID = hostelID
+
+	query := bson.M{
+		"_id": hostelID,
+	}
+	update := bson.M{
+		"$set": updatedHostel,
+	}
+	_, err := mongikDB.UpdateOne[models.Hostel](mongikClient, constants.DB, constants.COLLECTION_HOSTELS, query, update)
+
+	return err
 }
