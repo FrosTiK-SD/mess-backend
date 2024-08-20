@@ -81,6 +81,7 @@ func main() {
 	{
 		apiV1.Get("/token/user", handler.FiberAuthenticateUser, handler.GetUserFromToken)
 		apiV1.Post("/token/user", handler.CreateUserFromToken)
+		apiV1.Get("/rollNo/:rollNo/user", handler.GetUserByRollNo)
 
 		hostels := apiV1.Group("/hostels")
 		{

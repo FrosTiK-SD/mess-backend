@@ -123,7 +123,7 @@ func AssignRoomToUser(mongikClient *mongikModels.Mongik, id primitive.ObjectID, 
 
 func GetUserByRollNo(mongikClient *mongikModels.Mongik, rollNo int64, noCache bool) (models.User, error) {
 	pipeline := []bson.M{
-		{"$match": bson.M{"instituteProfile.rollNo": rollNo}},
+		{"$match": bson.M{"rollNo": rollNo}},
 	}
 	fmt.Println(pipeline)
 
