@@ -18,6 +18,7 @@ const COLLECTION_MEAL_TYPES = "mealTypes"
 const COLLECTION_MESSES = "messes"
 const COLLECTION_ROOMS = "rooms"
 const COLLECTION_USERS = "users"
+const COLLECTION_SEMESTERS = "semesters"
 
 const FIREBASE_PROJECT_ID = "FIREBASE_PROJECT_ID"
 

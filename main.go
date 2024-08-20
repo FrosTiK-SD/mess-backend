@@ -93,6 +93,14 @@ func main() {
 			hostels.Post("/:hostelID/batch/rooms", handler.BatchCreateHostelRooms)
 		}
 
+		semesters := apiV1.Group("/semesters")
+		{
+			semesters.Get("", handler.GetAllSemesters)
+			semesters.Post("", handler.CreateSemester)
+			semesters.Get("/:semesterID", handler.GetSemesterById)
+			semesters.Put("/:semesterID", handler.UpdateSemester)
+		}
+
 	}
 	// adminAPI := app.Group("/admin")
 	// {
