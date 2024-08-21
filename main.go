@@ -99,6 +99,15 @@ func main() {
 			semesters.Post("", handler.CreateSemester)
 			semesters.Get("/:semesterID", handler.GetSemesterById)
 			semesters.Put("/:semesterID", handler.UpdateSemester)
+
+			semesters.Get("/:semesterID/hostels/:hostelID/rooms", handler.GetSemesterHostelRoomWithAllotments)
+
+			semesters.Get("/:semesterID/rooms/:roomID/roomAllotments", handler.GetSemesterRoomAllotmentsWithUser)
+		}
+
+		roomAllotment := apiV1.Group("/roomAllotments")
+		{
+			roomAllotment.Post("", handler.CreateRoomAllotment)
 		}
 
 	}
