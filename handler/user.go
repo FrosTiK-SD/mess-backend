@@ -261,26 +261,6 @@ func (h *Handler) AssignMessToUsers(ctx *fiber.Ctx) error {
 	return nil
 }
 
-func (h *Handler) AssignRoomToUser(ctx *fiber.Ctx) error {
-	type RequestBody struct {
-		UserID primitive.ObjectID `json:"userId"`
-		Room   primitive.ObjectID `json:"room"`
-	}
-	var reqBody RequestBody
-
-	if err := ctx.BodyParser(&reqBody); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	err := controller.AssignRoomToUser(h.MongikClient, reqBody.UserID, reqBody.Room)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	return nil
-}
-
 func (h *Handler) GetUserByRollNo(ctx *fiber.Ctx) error {
 	rollNo, err := strconv.ParseInt(ctx.Params("rollNo", ""), 10, 64)
 	if err != nil {
@@ -295,5 +275,17 @@ func (h *Handler) GetUserByRollNo(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"user": user,
+	})
+}
+
+func (h *Handler) GetCaretakers(ctx *fiber.Ctx) error {
+	caretakers, err := controller.GetUserByRole(h.MongikClient, constants.CARETAKER)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"caretakers": caretakers,
 	})
 }

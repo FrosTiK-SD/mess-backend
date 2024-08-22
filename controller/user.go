@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"fmt"
-
 	"github.com/FrosTiK-SD/mess-backend/constants"
 	"github.com/FrosTiK-SD/mess-backend/interfaces"
 	"github.com/FrosTiK-SD/mess-backend/models"
@@ -107,27 +105,27 @@ func AssignMessToUsers(mongikClient *mongikModels.Mongik, mess primitive.ObjectI
 	return err
 }
 
-func AssignRoomToUser(mongikClient *mongikModels.Mongik, id primitive.ObjectID, room primitive.ObjectID) error {
-	filter := bson.M{
-		"_id": id,
-	}
-	update := bson.M{
-		"$set": bson.M{
-			"allocationDetails.room": room,
-		},
-	}
-	_, err := mongikDB.UpdateOne[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, filter, update)
-
-	return err
-}
-
 func GetUserByRollNo(mongikClient *mongikModels.Mongik, rollNo int64, noCache bool) (models.User, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"rollNo": rollNo}},
 	}
-	fmt.Println(pipeline)
 
 	user, err := mongikDB.AggregateOne[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, pipeline, noCache)
 
 	return user, err
+}
+
+func GetUserByRole(mongikClient *mongikModels.Mongik, role constants.Role) ([]models.User, error) {
+	pipeline := []bson.M{{
+		"$match": bson.M{
+			"role": role,
+		},
+	}}
+
+	users, err := mongikDB.Aggregate[models.User](mongikClient, constants.DB, constants.COLLECTION_USERS, pipeline, false)
+
+	if users == nil {
+		users = []models.User{}
+	}
+	return users, err
 }

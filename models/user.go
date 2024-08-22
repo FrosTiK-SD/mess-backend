@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	ID   primitive.ObjectID `json:"_id" bson:"_id"`
-	Role constants.Role     `json:"role" bson:"role"`
+	Role constants.Role     `json:"role" bson:"role" binding:"required"`
 
 	FirstName  string `json:"firstName" bson:"firstName"`
 	MiddleName string `json:"middleName" bson:"middleName"`
