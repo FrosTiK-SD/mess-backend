@@ -40,32 +40,32 @@ func GetUserFromFilter(mongikClient *mongikModels.Mongik, userFilter *interfaces
 
 	matchStatement := bson.M{}
 
-	if len(userFilter.RollNos) != 0 {
-		matchStatement["instituteProfile.rollNo"] = bson.M{
-			"$in": userFilter.RollNos,
+	if len(userFilter.RollNo) != 0 {
+		matchStatement["rollNo"] = bson.M{
+			"$in": userFilter.RollNo,
 		}
 	}
 
 	if len(userFilter.EndYear) != 0 {
-		matchStatement["instituteProfile.endYear"] = bson.M{
+		matchStatement["endYear"] = bson.M{
 			"$in": userFilter.EndYear,
 		}
 	}
 
-	if len(userFilter.Courses) != 0 {
-		matchStatement["instituteProfile.course"] = bson.M{
-			"$in": userFilter.Courses,
+	if len(userFilter.Course) != 0 {
+		matchStatement["course"] = bson.M{
+			"$in": userFilter.Course,
 		}
 	}
 
 	if len(userFilter.Department) != 0 {
-		matchStatement["instituteProfile.department"] = bson.M{
+		matchStatement["department"] = bson.M{
 			"$in": userFilter.Department,
 		}
 	}
 
 	if len(userFilter.StartYear) != 0 {
-		matchStatement["instituteProfile.startYear"] = bson.M{
+		matchStatement["startYear"] = bson.M{
 			"$in": userFilter.StartYear,
 		}
 	}

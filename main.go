@@ -79,11 +79,13 @@ func main() {
 
 	apiV1 := app.Group("/api/v1")
 	{
+		//Returns Users
 		apiV1.Get("/token/user", handler.FiberAuthenticateUser, handler.GetUserFromToken)
 		apiV1.Post("/token/user", handler.CreateUserFromToken)
 		apiV1.Get("/rollNo/:rollNo/user", handler.GetUserByRollNo)
 		apiV1.Post("/user", handler.CreateUser)
 		apiV1.Get("/caretakers", handler.GetCaretakers)
+		apiV1.Post("/filteredUsers", handler.GetFilteredUsers)
 
 		apiV1.Post("/hostelStaffAllotments", handler.CreateHostelStaffAllotment)
 		hostels := apiV1.Group("/hostels")

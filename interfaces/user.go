@@ -8,9 +8,9 @@ import (
 type UserFilter struct {
 	StartYear  []int                  `json:"startYear" binding:"required"`
 	EndYear    []int                  `json:"endYear" binding:"required"`
-	RollNos    []int                  `json:"rollNos" binding:"required"`
+	RollNo     []int                  `json:"rollNo" binding:"required"`
 	Department []constants.Department `json:"department" binding:"required"`
-	Courses    []constants.Course     `json:"courses" binding:"required"`
+	Course     []constants.Course     `json:"course" binding:"required"`
 }
 
 type UserMealForADay struct {
