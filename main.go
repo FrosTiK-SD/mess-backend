@@ -94,6 +94,7 @@ func main() {
 			hostels.Put("/:hostelID", handler.UpdateHostel)
 			hostels.Get("/:hostelID/rooms", handler.GetHostelRooms)
 			hostels.Post("/:hostelID/batch/rooms", handler.BatchCreateHostelRooms)
+			hostels.Get("/:hostelID/hostelStaffAllotments", handler.GetHostelStaffAllotmentWithUser)
 		}
 
 		semesters := apiV1.Group("/semesters")
