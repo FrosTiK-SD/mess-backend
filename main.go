@@ -88,6 +88,9 @@ func main() {
 		apiV1.Post("/filteredUsers", handler.GetFilteredUsers)
 
 		apiV1.Post("/hostelStaffAllotments", handler.CreateHostelStaffAllotment)
+
+		apiV1.Post("/hostelAllotments/batch", handler.BatchCreateHostelAllotments)
+
 		hostels := apiV1.Group("/hostels")
 		{
 			hostels.Get("", handler.GetAllHostels)
