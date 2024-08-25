@@ -119,6 +119,12 @@ func main() {
 			roomAllotment.Post("", handler.CreateRoomAllotment)
 		}
 
+		messes := apiV1.Group("/messes")
+		{
+			messes.Get("", handler.GetAllMesses)
+			messes.Post("", handler.CreateMess)
+		}
+
 	}
 	// adminAPI := app.Group("/admin")
 	// {

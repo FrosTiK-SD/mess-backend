@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/FrosTiK-SD/mess-backend/constants"
+	"github.com/FrosTiK-SD/mess-backend/controller"
 	"github.com/FrosTiK-SD/mess-backend/interfaces"
 	"github.com/FrosTiK-SD/mess-backend/models"
 	"github.com/gofiber/fiber/v2"
@@ -15,17 +16,30 @@ func (handler *Handler) CreateMess(ctx *fiber.Ctx) error {
 	var Mess models.Mess
 
 	if err := ctx.BodyParser(&Mess); err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	Mess.ID = primitive.NewObjectID()
-
-	collection := handler.MongikClient.MongoClient.Database(constants.DB).Collection(constants.COLLECTION_MESSES)
-	if result, err := collection.InsertOne(ctx.Context(), Mess); err != nil {
-		return err
-	} else {
-		return ctx.JSON(interfaces.GetGenericResponse(true, "Mess Created", result, nil))
+	if err := controller.CreateMess(handler.MongikClient, &Mess); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
+
+	return ctx.JSON(fiber.Map{
+		"mess": Mess,
+	})
+
+}
+
+func (h *Handler) GetAllMesses(ctx *fiber.Ctx) error {
+
+	messes, err := controller.GetAllMesses(h.MongikClient)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"messes": messes,
+	})
 }
 
 func (handler *Handler) GetMess(ctx *fiber.Ctx) error {
