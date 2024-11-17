@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/FrosTiK-SD/mess-backend/constants"
 	"github.com/FrosTiK-SD/mess-backend/controller"
@@ -174,7 +175,7 @@ func (handler *Handler) ManageHostelMess(ctx *fiber.Ctx) error {
 
 // Authenticated
 func (h *Handler) GetUserFromToken(ctx *fiber.Ctx) error {
-	user, ok := ctx.Locals(constants.SESSION).(interfaces.UserPopulated)
+	user, ok := ctx.Locals(constants.SESSION).(models.User)
 
 	if !ok {
 		return fiber.NewError(fiber.StatusForbidden, "Authentication Failed")
@@ -226,5 +227,65 @@ func (h *Handler) GetFilteredUsers(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"users": users,
+	})
+}
+
+func (h *Handler) AssignHostelToUsers(ctx *fiber.Ctx) error {
+	var reqBody interfaces.AssignHostelToUsersRequestBody
+
+	if err := ctx.BodyParser(&reqBody); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	err := controller.AssignHostelToUsers(h.MongikClient, reqBody.Hostel, reqBody.Users)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}
+
+func (h *Handler) AssignMessToUsers(ctx *fiber.Ctx) error {
+	var reqBody interfaces.AssignMessToUsersRequestBody
+
+	if err := ctx.BodyParser(&reqBody); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := controller.AssignMessToUsers(h.MongikClient, reqBody.Mess, reqBody.Users)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}
+
+func (h *Handler) GetUserByRollNo(ctx *fiber.Ctx) error {
+	rollNo, err := strconv.ParseInt(ctx.Params("rollNo", ""), 10, 64)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Could not parse rollNo")
+	}
+
+	user, err := controller.GetUserByRollNo(h.MongikClient, rollNo, false)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"user": user,
+	})
+}
+
+func (h *Handler) GetCaretakers(ctx *fiber.Ctx) error {
+	caretakers, err := controller.GetUserByRole(h.MongikClient, constants.CARETAKER)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(fiber.Map{
+		"caretakers": caretakers,
 	})
 }

@@ -3,6 +3,9 @@ package constants
 type Role = string
 
 const (
-	USER      Role = "USER"
-	USER_READ Role = "USER_READ"
+	USER         Role = "USER"
+	CARETAKER    Role = "CARETAKER"
+	WARDEN       Role = "WARDEN"
+	ADMIN_WARDEN Role = "ADMIN_WARDEN"
+	ADMIN        Role = "ADMIN"
 )
